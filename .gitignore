@@ -1,0 +1,13 @@
+node_modules/
+private/
+local/
+.env
+public/vendor/
+public/playground/
+.vscode/
+yarn.lock
+data/
+logs/
+trade-logs/
+errors.log
+*.zip

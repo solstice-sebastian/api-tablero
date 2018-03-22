@@ -1,0 +1,11 @@
+{
+  "name": "mi-comerciante",
+  "version": "0.0.1",
+  "description": "playground",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Aric Allen",
+  "license": "MIT"
+}

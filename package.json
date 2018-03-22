@@ -4,7 +4,24 @@
   "description": "playground",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "dev": "nodemon index.js",
+    "start": "node --max-old-space-size=256 index.js",
+    "test": "tape-watch tests/**/*.js | faucet"
+  },
+  "devDependencies": {
+    "eslint": "^4.16.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-prettier": "^2.5.0",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "faucet": "^0.0.1",
+    "prettier": "^1.10.2",
+    "tape": "^4.9.0",
+    "tape-watch": "^2.3.0"
   },
   "author": "Aric Allen",
   "license": "MIT"

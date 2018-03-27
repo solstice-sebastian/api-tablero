@@ -1,5 +1,5 @@
 const test = require('tape');
-const HumanTime = require('../modules/human-time.js');
+const HumanTime = require('../common/human-time.js');
 const {
   MS_PER_SECOND,
   MS_PER_MINUTE,

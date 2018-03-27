@@ -11,22 +11,22 @@ const { noop } = require('../common/helpers.js')();
  * @param {Function=} action to be called when trade should exit
  */
 const TrailBull = ({ startTicker, buffer, action = noop }) => {
-  let limitPrice = modByPercent(startTicker.lastPrice, buffer); // -0.5%
+  let limitPrice = modByPercent(startTicker.price, buffer); // -0.5%
 
   /**
    * called on every ticker change
    * @param {Ticker}
    */
   const update = ({ ticker }) => {
-    const percentDiff = getPercentDiff(ticker.lastPrice, limitPrice);
+    const percentDiff = getPercentDiff(ticker.price, limitPrice);
 
-    if (ticker.lastPrice > 0 && ticker.lastPrice < limitPrice) {
+    if (ticker.price > 0 && ticker.price < limitPrice) {
       // exit trade
       action();
       return { ticker, limitPrice, shouldContinue: false };
-    } else if (ticker.lastPrice > 0 && Math.abs(percentDiff) > Math.abs(buffer)) {
+    } else if (ticker.price > 0 && Math.abs(percentDiff) > Math.abs(buffer)) {
       // raise limitPrice
-      limitPrice = modByPercent(ticker.lastPrice, buffer);
+      limitPrice = modByPercent(ticker.price, buffer);
     }
     return { ticker, limitPrice, shouldContinue: true };
   };

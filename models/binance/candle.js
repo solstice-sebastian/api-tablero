@@ -1,10 +1,10 @@
-// const Constants = require('../../common/constants.js');
-const { msToDatetime } = require('../../common/helpers.js')();
-
+/**
+ * @implements {Ticker}
+ */
 class BinanceCandle {
   constructor(data) {
     const candle = data.k;
-    this.timestamp = msToDatetime(data.E);
+    this.timestamp = data.E;
     this.symbol = candle.s;
     this.interval = candle.i;
     this.open = candle.o;
@@ -19,7 +19,7 @@ class BinanceCandle {
     this.takerVolume = candle.Q;
   }
 
-  get currentPrice() {
+  get price() {
     return this.close;
   }
 }

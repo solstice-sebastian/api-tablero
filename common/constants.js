@@ -4,7 +4,7 @@ module.exports = {
   NO_ENTRY: 'No entry',
   NO_EXIT: 'No exit',
   NO_LIMIT_PRICE: 'No limitPrice',
-  NO_LAST_PRICE: 'No lastPrice',
+  NO_PRICE: 'No price',
   NO_TICKER: 'No ticker',
   INSUFFICIENT_DATA: 'Insufficient data',
 

@@ -1,7 +1,6 @@
 /**
  * set config
  * initiate trail bull
- * poller.js to run trail-bull
  * log results
  * email results
  *
@@ -10,8 +9,7 @@
  */
 require('dotenv').config();
 const BinanceCandle = require('./models/binance/candle.js');
-// const fetch = require('node-fetch');
-// const Ticker = require('./models/ticker.js');
+const TrailBull = require('./modules/trail-bull.js');
 const Constants = require('./common/constants.js');
 const WebSocket = require('ws');
 
@@ -22,8 +20,25 @@ const address = `wss://stream.binance.com:9443/ws/${channelName}`;
 // const address = 'wss://stream.binance.com:9443/ws/bnbbtc@depth';
 const ws = new WebSocket(address);
 
+ws.on('error', (err) => console.log('errored', err));
+
+/**
+ * trail a bull by -1%
+ */
+const buffer = -0.01;
+let startTicker = null;
+let trailBull;
+
 ws.on('message', (response) => {
   const candle = new BinanceCandle(JSON.parse(response));
+  if (startTicker === null) {
+    startTicker = candle;
+    trailBull = TrailBull({ startTicker, buffer });
+  } else {
+    const result = new TradeResult(trailBull.update({ ticker }));
+    if (result.shouldContinue === false) {
+      // trade exited
+      exitTrade(result);
+    }
+  }
 });
-
-ws.on('error', (err) => console.log('errored', err));

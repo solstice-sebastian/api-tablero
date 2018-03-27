@@ -41,8 +41,17 @@ const Helpers = () => {
 
   const datetimeForFilename = () => moment().format(DATETIME_FILENAME);
   const datetime = () => moment().format(DATETIME);
+  const msToDatetime = (ms) => moment(ms).format(DATETIME);
 
-  return { modByPercent, getPercentDiff, noop, datetime, datetimeForFilename, globDelete };
+  return {
+    modByPercent,
+    getPercentDiff,
+    noop,
+    datetime,
+    datetimeForFilename,
+    globDelete,
+    msToDatetime,
+  };
 };
 
 if (typeof module !== 'undefined') {

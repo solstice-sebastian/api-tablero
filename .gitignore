@@ -6,6 +6,7 @@ public/vendor/
 public/playground/
 .vscode/
 yarn.lock
+yarn-error.log
 data/
 logs/
 trade-logs/

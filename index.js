@@ -21,7 +21,7 @@ const BinanceCandle = require('./models/binance/candle.js');
 const TrailBull = require('./modules/trail-bull.js');
 const Constants = require('./common/constants.js');
 const Emailer = require('./modules/emailer.js');
-const { getPercentDiff, datetime } = require('./common/helpers.js')();
+const { getPercentDiff, datetime, nicePercent } = require('./common/helpers.js')();
 
 const options = commandLineArgs(cmdDefs);
 
@@ -61,8 +61,8 @@ const exitTrade = (result) => {
   const startPrice = startTicker.price;
   const endPrice = result.ticker.price;
   const profitLoss = getPercentDiff(startPrice, endPrice, 4) - Constants.TRADE_FEE;
-  const text = `\n\ttrade exited with profitLoss of ${(profitLoss * 100).toFixed(
-    4
+  const text = `\n\ttrade exited with profitLoss of ${nicePercent(
+    profitLoss
   )}%\n\tstartPrice: ${startPrice}\n\tendPrice: ${endPrice}`;
   log(text);
 
@@ -76,7 +76,7 @@ const exitTrade = (result) => {
 
 const updateLimitPrice = (prev, curr) => {
   const profitLoss = getPercentDiff(prev, curr, 4);
-  log(`updating limitPrice ${prev} -> ${curr} = ${nicePercent(profitLoss)}`);
+  log(`updating limitPrice ${prev} -> ${curr} = ${nicePercent(profitLoss)} profitLoss`);
 };
 
 ws.on('message', (response) => {

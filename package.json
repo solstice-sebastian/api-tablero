@@ -26,6 +26,7 @@
   "author": "Aric Allen",
   "license": "MIT",
   "dependencies": {
+    "command-line-args": "^5.0.2",
     "dotenv": "^5.0.1",
     "emailjs": "^2.0.0",
     "glob": "^7.1.2",

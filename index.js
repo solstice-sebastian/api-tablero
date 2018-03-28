@@ -21,7 +21,7 @@ const BinanceCandle = require('./models/binance/candle.js');
 const TrailBull = require('./modules/trail-bull.js');
 const Constants = require('./common/constants.js');
 const Emailer = require('./modules/emailer.js');
-const { getPercentDiff } = require('./common/helpers.js')();
+const { getPercentDiff, datetime } = require('./common/helpers.js')();
 
 const options = commandLineArgs(cmdDefs);
 
@@ -48,25 +48,35 @@ let startTicker = null;
 let trailBull;
 const logFile = 'trade.log';
 
+const log = (msg) => {
+  console.log(msg);
+  fs.appendFileSync(logFile, `${datetime()}: ${msg}\n`);
+};
+
 /**
  * @param {Object} result { ticker, limitPrice, shouldContinue } from TrailBull
  */
 const exitTrade = (result) => {
   // email results
-  const profitLoss = getPercentDiff(startTicker.price, result.price);
+  const startPrice = startTicker.price;
+  const endPrice = result.ticker.price;
+  const profitLoss = getPercentDiff(startPrice, endPrice, 4) - Constants.TRADE_FEE;
+  const text = `\n\ttrade exited with profitLoss of ${(profitLoss * 100).toFixed(
+    4
+  )}%\n\tstartPrice: ${startPrice}\n\tendPrice: ${endPrice}`;
+  log(text);
+
   emailer.send({
     to: 'solstice.sebastian@gmail.com',
-    text: `
-      trade exited with profit loss of ${profitLoss.toFixed(3) * 100}%
-      startPrice: ${startTicker.price}
-      endPrice: ${result.price}
-    `,
+    text,
   });
+
   process.exit(1);
 };
 
 const updateLimitPrice = (prev, curr) => {
-  fs.appendFileSync(logFile, `updating limitPrice ${prev} -> ${curr}`);
+  const profitLoss = getPercentDiff(prev, curr, 4);
+  log(`updating limitPrice ${prev} -> ${curr} = ${nicePercent(profitLoss)}`);
 };
 
 ws.on('message', (response) => {

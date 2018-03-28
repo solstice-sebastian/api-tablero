@@ -2,6 +2,10 @@ const emailjs = require('emailjs');
 const { datetime } = require('../common/helpers.js')();
 
 const Emailer = ({ username, password, host, ssl = true }) => {
+  if (username === undefined || password === undefined || host === undefined) {
+    throw new Error('Emailer missing parameters');
+  }
+
   const server = emailjs.server.connect({
     user: username,
     password,

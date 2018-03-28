@@ -16,14 +16,19 @@ const Helpers = () => {
    * @return float representation of a percent i.e. 2% => 0.02 || -2% => -0.02
    */
   const getPercentDiff = (start, end, digits = 10) => {
+    const _start = +start;
+    const _end = +end;
+
     let diff;
-    if (end < start) {
-      diff = (start - end) / start * -1;
+    if (_end < _start) {
+      diff = (_start - _end) / _start * -1;
     } else {
-      diff = (end - start) / start;
+      diff = (_end - _start) / _start;
     }
     return +diff.toFixed(digits);
   };
+
+  const nicePercent = (percent, digits = 2) => `${(percent * 100).toFixed(digits)}%`;
 
   const globDelete = (globStr) =>
     new Promise((res, rej) => {
@@ -51,6 +56,7 @@ const Helpers = () => {
     datetimeForFilename,
     globDelete,
     msToDatetime,
+    nicePercent,
   };
 };
 

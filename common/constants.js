@@ -19,6 +19,11 @@ module.exports = {
     EXITED: 'EXITED',
   },
 
+  exchanges: {
+    BINANCE: 'BINANCE',
+    GDAX: 'GDAX',
+  },
+
   binance: {
     stream: {
       HOSTNAME: 'stream.binance.com',

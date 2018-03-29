@@ -28,3 +28,19 @@ test(`nicePercent`, (assert) => {
   assert.equal(nicePercent(p, 3), '12.346%', 'should take places param');
   assert.end();
 });
+
+test(`toQueryString`, (assert) => {
+  const { toQueryString } = Helpers();
+  const input = {
+    key1: 'val1',
+    key2: 'val2',
+  };
+  const expected = 'key1=val1&key2=val2';
+  assert.equal(toQueryString(input), expected);
+  assert.equal(
+    toQueryString(Object.assign({}, input, { bogus: undefined })),
+    expected,
+    'should not add empty vals'
+  );
+  assert.end();
+});

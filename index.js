@@ -9,7 +9,6 @@
  */
 require('dotenv').config();
 const WebSocket = require('ws');
-const fs = require('fs');
 
 const cmdDefs = [
   { name: 'symbol', alias: 's', type: String },
@@ -21,7 +20,8 @@ const BinanceCandle = require('./models/binance/candle.js');
 const TrailBull = require('./modules/trail-bull.js');
 const Constants = require('./common/constants.js');
 const Emailer = require('./modules/emailer.js');
-const { getPercentDiff, datetime, nicePercent } = require('./common/helpers.js')();
+const { log } = require('./common/logger.js')();
+const { getPercentDiff, nicePercent } = require('./common/helpers.js')();
 
 const options = commandLineArgs(cmdDefs);
 
@@ -43,15 +43,9 @@ ws.on('error', (err) => console.log('errored', err));
 /**
  * trail a bull by -1%
  */
-const buffer = options.buffer || -0.01;
+const buffer = options.buffer || -0.001;
 let startTicker = null;
 let trailBull;
-const logFile = 'trade.log';
-
-const log = (msg) => {
-  console.log(msg);
-  fs.appendFileSync(logFile, `${datetime()}: ${msg}\n`);
-};
 
 /**
  * @param {Object} result { ticker, limitPrice, shouldContinue } from TrailBull
@@ -63,11 +57,11 @@ const exitTrade = (result) => {
   const profitLoss = getPercentDiff(startPrice, endPrice, 4) - Constants.TRADE_FEE;
   const text = `\n\ttrade exited with profitLoss of ${nicePercent(
     profitLoss
-  )}%\n\tstartPrice: ${startPrice}\n\tendPrice: ${endPrice}`;
+  )}\n\tstartPrice: ${startPrice}\n\tendPrice: ${endPrice}`;
   log(text);
 
   emailer.send({
-    to: 'solstice.sebastian@gmail.com',
+    to: 'bujurasta2@gmail.com',
     text,
   });
 
@@ -75,14 +69,16 @@ const exitTrade = (result) => {
 };
 
 const updateLimitPrice = (prev, curr) => {
-  const profitLoss = getPercentDiff(prev, curr, 4);
-  log(`updating limitPrice ${prev} -> ${curr} = ${nicePercent(profitLoss)} profitLoss`);
+  const profitLoss = getPercentDiff(startTicker.price, curr, 4) - Constants.TRADE_FEE;
+  log(`updating limitPrice: ${prev} -> ${curr} = currentProfitloss: ${nicePercent(profitLoss)}`);
 };
 
 ws.on('message', (response) => {
   const candle = new BinanceCandle(JSON.parse(response));
   if (startTicker === null) {
     startTicker = candle;
+    log(`startPrice: ${startTicker.price}`);
+    log(`buffer: ${buffer}`);
     trailBull = TrailBull({ startTicker, buffer, updateLimitPrice });
   } else {
     const ticker = candle;

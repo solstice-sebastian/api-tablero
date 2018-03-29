@@ -48,6 +48,16 @@ const Helpers = () => {
   const datetime = () => moment().format(DATETIME);
   const msToDatetime = (ms) => moment(ms).format(DATETIME);
 
+  const toQueryString = (obj) => {
+    let str = '';
+    Object.keys(obj).forEach((key) => {
+      if (obj[key] !== undefined) {
+        str = `${str}&${key}=${obj[key]}`;
+      }
+    });
+    return str.replace(/&$/, '').replace(/^&/, '');
+  };
+
   return {
     modByPercent,
     getPercentDiff,
@@ -57,6 +67,7 @@ const Helpers = () => {
     globDelete,
     msToDatetime,
     nicePercent,
+    toQueryString,
   };
 };
 

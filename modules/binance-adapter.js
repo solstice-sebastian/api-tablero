@@ -3,6 +3,7 @@ const fetch = require('node-fetch');
 const CryptoJS = require('crypto-js');
 const Constants = require('../common/constants.js');
 const { toQueryString } = require('../common/helpers.js')();
+const BinanceBalanceBook = require('../models/binance/balance-book.js');
 
 /**
  * handles endpoints regarding open and historical orders
@@ -82,12 +83,12 @@ const BinanceAdapter = ({ host = 'https://api.binance.com', headers, apiSecret }
     return new Promise((res, rej) => {
       getAccountInfo({})
         .then((response) => response.json())
-        .then((data) => data.balances.filter((coins) => +coins.free > 0))
-        .then((valueCoins) => valueCoins.sort((a, b) => (+a.free > +b.free ? 1 : -1)))
-        .then((sorted) => res(sorted))
-        .catch((err) => {
-          rej(err);
-        });
+        .then((data) => new BinanceBalanceBook(data.balances))
+        .then((binanceBalanceBook) => {
+          binanceBalanceBook.log();
+          return res(binanceBalanceBook);
+        })
+        .catch((err) => rej(err));
     });
   };
 

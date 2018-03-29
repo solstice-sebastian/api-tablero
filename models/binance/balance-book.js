@@ -1,7 +1,7 @@
 /**
  * handles the data structure returned by `getBalances`
  */
-class BinanceBalances {
+class BinanceBalanceBook {
   constructor(balances) {
     this.balances = balances
       .filter((coins) => +coins.free > 0)
@@ -12,6 +12,10 @@ class BinanceBalances {
   getBySymbol(symbol) {
     return this.balances.find((item) => item.symbol === symbol);
   }
+
+  log() {
+    this.balances.forEach((item) => console.log(`${item.symbol} -> ${item.free}`));
+  }
 }
 
-module.exports = BinanceBalances;
+module.exports = BinanceBalanceBook;

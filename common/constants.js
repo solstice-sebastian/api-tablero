@@ -33,6 +33,7 @@ module.exports = {
     endpoints: {
       GET_OPEN_ORDERS: '/api/v3/openOrders',
       GET_SERVER_TIME: '/api/v1/time',
+      GET_ACCOUNT_INFO: '/api/v3/account',
     },
     intervals: {
       ONE_MINUTE: '1m',

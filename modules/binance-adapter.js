@@ -48,7 +48,7 @@ const BinanceAdapter = ({ host = 'https://api.binance.com', headers, apiSecret }
    * @param {String?} symbol
    * @param {Number?} recvWindow
    */
-  const getOpenOrders = ({ timestamp, symbol, recvWindow }) => {
+  const getOpenOrders = ({ timestamp = Date.now(), symbol, recvWindow }) => {
     if (timestamp === undefined) {
       throw new Error('getOpenOrders requires timestamp');
     }
@@ -63,7 +63,35 @@ const BinanceAdapter = ({ host = 'https://api.binance.com', headers, apiSecret }
     return fetch(url, { headers });
   };
 
-  return { getOpenOrders, getServerTime };
+  /**
+   * @param {Number} timestamp
+   * @param {Number?} recvWindow
+   * includes current balances
+   */
+  const getAccountInfo = ({ timestamp = Date.now(), recvWindow }) => {
+    const params = { timestamp, recvWindow };
+    const signature = getSignature(params);
+    const queryString = toQueryString(Object.assign({}, params, { signature }));
+    const endpoint = Constants.binance.endpoints.GET_ACCOUNT_INFO;
+    const url = getUrl(endpoint, queryString);
+
+    return fetch(url, { headers });
+  };
+
+  const getBalances = () => {
+    return new Promise((res, rej) => {
+      getAccountInfo({})
+        .then((response) => response.json())
+        .then((data) => data.balances.filter((coins) => +coins.free > 0))
+        .then((valueCoins) => valueCoins.sort((a, b) => (+a.free > +b.free ? 1 : -1)))
+        .then((sorted) => res(sorted))
+        .catch((err) => {
+          rej(err);
+        });
+    });
+  };
+
+  return { getOpenOrders, getServerTime, getAccountInfo, getBalances };
 };
 
 module.exports = BinanceAdapter;

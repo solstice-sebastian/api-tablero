@@ -16,7 +16,7 @@ const cmdDefs = [
 ];
 const commandLineArgs = require('command-line-args');
 
-const BinanceCandle = require('./models/binance/candle.js');
+const BinanceCandle = require('./binance/candle.js');
 const TrailBull = require('./modules/trail-bull.js');
 const Constants = require('./common/constants.js');
 const Emailer = require('./modules/emailer.js');

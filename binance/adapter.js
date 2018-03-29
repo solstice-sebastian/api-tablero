@@ -1,9 +1,8 @@
 const fetch = require('node-fetch');
-// const forge = require('node-forge');
 const CryptoJS = require('crypto-js');
 const Constants = require('../common/constants.js');
 const { toQueryString } = require('../common/helpers.js')();
-const BinanceBalanceBook = require('../models/binance/balance-book.js');
+const BinanceBalanceBook = require('./balance-book.js');
 
 /**
  * handles endpoints regarding open and historical orders
@@ -35,6 +34,12 @@ const BinanceAdapter = ({ host = 'https://api.binance.com', headers, apiSecret }
     return CryptoJS.enc.Hex.stringify(hash);
   };
 
+  const buildSignedQueryString = (params) => {
+    const signature = getSignature(params);
+    const queryString = toQueryString(Object.assign({}, params, { signature }));
+    return queryString;
+  };
+
   /**
    * get the server time
    */
@@ -56,8 +61,7 @@ const BinanceAdapter = ({ host = 'https://api.binance.com', headers, apiSecret }
 
     // const method = 'GET';
     const params = { timestamp, symbol, recvWindow };
-    const signature = getSignature(params);
-    const queryString = toQueryString(Object.assign({}, params, { signature }));
+    const queryString = buildSignedQueryString(params);
     const endpoint = Constants.binance.endpoints.GET_OPEN_ORDERS;
     const url = getUrl(endpoint, queryString);
 
@@ -71,8 +75,7 @@ const BinanceAdapter = ({ host = 'https://api.binance.com', headers, apiSecret }
    */
   const getAccountInfo = ({ timestamp = Date.now(), recvWindow }) => {
     const params = { timestamp, recvWindow };
-    const signature = getSignature(params);
-    const queryString = toQueryString(Object.assign({}, params, { signature }));
+    const queryString = buildSignedQueryString(params);
     const endpoint = Constants.binance.endpoints.GET_ACCOUNT_INFO;
     const url = getUrl(endpoint, queryString);
 

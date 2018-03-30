@@ -3,9 +3,9 @@
  * should follow an interface to work with multiple exchanges
  * @interface
  * @method enter
+ * @method enterWhen
  * @method exit
- * @param namespace
- * @param endpoints for the require methods
+ * @method exitWhen
  */
 const TradeEngine = () => {
   // const API_SECRET = process.env.API_SECRET;

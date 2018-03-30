@@ -19,12 +19,20 @@ module.exports = {
     EXITED: 'EXITED',
   },
 
+  requestMethods: {
+    GET: 'GET',
+    POST: 'POST',
+    DELETE: 'DELETE',
+    PUT: 'PUT',
+  },
+
   exchanges: {
     BINANCE: 'BINANCE',
     GDAX: 'GDAX',
   },
 
   binance: {
+    API_HOST: 'https://api.binance.com',
     stream: {
       HOSTNAME: 'stream.binance.com',
       PORT: 9443,
@@ -34,6 +42,9 @@ module.exports = {
       GET_OPEN_ORDERS: '/api/v3/openOrders',
       GET_SERVER_TIME: '/api/v1/time',
       GET_ACCOUNT_INFO: '/api/v3/account',
+      POST_ORDER: '/api/v3/order/test',
+      GET_ORDER: '/api/v3/order',
+      DELETE_ORDER: '/api/v3/order',
     },
     intervals: {
       ONE_MINUTE: '1m',

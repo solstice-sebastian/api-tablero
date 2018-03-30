@@ -1,3 +1,4 @@
+/* eslint valid-typeof: 'off' */
 const moment = require('moment');
 const glob = require('glob');
 const fs = require('fs');
@@ -58,6 +59,40 @@ const Helpers = () => {
     return str.replace(/&$/, '').replace(/^&/, '');
   };
 
+  /**
+   * @param required [key] { type, validator }
+   */
+  const validateRequired = (required = {}, params = {}, shouldThrow = false) => {
+    const requiredKeys = Object.keys(required);
+    const errors = [];
+
+    Object.keys(required).forEach((key) => {
+      const value = params[key];
+      const requiredItem = required[key];
+
+      if (requiredKeys.includes(key) === true) {
+        if (value === undefined) {
+          // is required but undefined
+          errors.push(`Missing param '${key}'`);
+        } else if (requiredItem.type !== undefined && typeof value !== requiredItem.type) {
+          // is required but wrong type
+          errors.push(`Incorrect type for param '${key}'. Received '${typeof value}'`);
+        } else if (
+          typeof requiredItem.validator === 'function' &&
+          requiredItem.validator(value) === false
+        ) {
+          errors.push(`Failed validator function for param '${key}'`);
+        }
+      }
+    });
+
+    if (errors.length > 0 && shouldThrow === true) {
+      throw new Error(errors.join('\n'));
+    } else {
+      return errors.map((msg) => new Error(msg));
+    }
+  };
+
   return {
     modByPercent,
     getPercentDiff,
@@ -68,6 +103,7 @@ const Helpers = () => {
     msToDatetime,
     nicePercent,
     toQueryString,
+    validateRequired,
   };
 };
 

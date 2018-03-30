@@ -2,6 +2,19 @@ const { orderTypes, orderSides, endpoints } = require('../common/constants.js').
 const BinanceBalanceBook = require('./balance-book.js');
 const BinanceAdapter = require('./adapter');
 
+const getDefaults = (overrides) =>
+  Object.assign(
+    {},
+    {
+      timestamp: Date.now(),
+      timeInForce: 5000,
+      recvWindow: 5000,
+    },
+    overrides
+  );
+
+
+
 /**
  * LIMIT: make a bid to sell at `price`
  * LIMIT_MAKER: make a bid to buy at `price` ???
@@ -19,10 +32,6 @@ const BinanceAdapter = require('./adapter');
 class BinanceTrader {
   constructor() {
     this.adapter = new BinanceAdapter();
-
-    // defaults
-    this.timeInForce = 5000;
-    this.recvWindow = 5000;
   }
 
   /**
@@ -34,12 +43,42 @@ class BinanceTrader {
    * @return {Promise}
    */
   postLimitOrder({ symbol, quantity, price }) {
-    const { timeInForce } = this;
-    const timestamp = Date.now();
     const side = orderSides.SELL;
     const type = orderTypes.LIMIT;
     const endpoint = endpoints.POST_ORDER;
-    const params = { symbol, quantity, side, type, timestamp, timeInForce, price };
+    const params = { symbol, quantity, side, type, price, ...getDefaults() };
+    return this.adapter.post(endpoint, params);
+  }
+
+  /**
+   * LIMIT_MAKER: make a bid to buy at `price` ???
+   *
+   * @param {String} symbol
+   * @param {Number} quantity
+   * @param {price} price
+   * @return {Promise}
+   */
+  postLimitMakerOrder({ symbol, quantity, price }) {
+    const side = orderSides.SELL;
+    const type = orderTypes.LIMIT_MAKER;
+    const endpoint = endpoints.POST_ORDER;
+    const params = { symbol, quantity, side, type, price, ...getDefaults() };
+    return this.adapter.post(endpoint, params);
+  }
+
+  /**
+   * STOP_LOSS: make market trade when `price` < `stopPrice`
+   *
+   * @param {String} symbol
+   * @param {Number} quantity
+   * @param {price} price
+   * @return {Promise}
+   */
+  postLimitMakerOrder({ symbol, quantity, stopPrice }) {
+    const side = orderSides.SELL;
+    const type = orderTypes.STOP_LOSS;
+    const endpoint = endpoints.POST_ORDER;
+    const params = { symbol, quantity, side, type, price, ...getDefaults() };
     return this.adapter.post(endpoint, params);
   }
 

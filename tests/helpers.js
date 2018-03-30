@@ -44,3 +44,44 @@ test(`toQueryString`, (assert) => {
   );
   assert.end();
 });
+
+test(`validateRequired`, (assert) => {
+  const { validateRequired } = Helpers();
+  const required = {
+    key1: {
+      type: 'string',
+    },
+    key2: {},
+    key3: {
+      type: 'number',
+      validator: (value) => value > 5,
+    },
+    key4: {},
+  };
+
+  const params = {
+    key1: [], // wrong type
+    key2: null, // valid
+    key3: 2, // fails validator
+    // key4 is missing
+  };
+  const validParams = {
+    key1: 'val1',
+    key2: null,
+    key3: 6,
+    key4: false,
+  };
+  assert.equal(validateRequired(required, params).length, 3, 'should return 3 errors');
+  assert.equal(
+    validateRequired(required, params).every((error) => error.constructor === Error),
+    true,
+    'should return Errors'
+  );
+  assert.equal(
+    validateRequired(required, validParams).length,
+    0,
+    'should return empty array when valid'
+  );
+  assert.throws(() => validateRequired(required, params, true), 'should throw when flag set');
+  assert.end();
+});

@@ -116,6 +116,11 @@ module.exports = {
         DAY: 'DAY',
       },
     },
+    timeInForce: {
+      GOOD_TIL_CANCELED: 'GTC', // good til canceled
+      IMMEDIATE_OR_CANCEL: 'IOC',
+      FILL_OR_KILL: 'FOK', // fill or kill
+    },
   },
 
   TRADE_FEE: 0.001,

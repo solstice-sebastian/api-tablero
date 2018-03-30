@@ -1,4 +1,9 @@
-const { orderTypes, orderSides, endpoints } = require('../common/constants.js').binance;
+const {
+  orderTypes,
+  orderSides,
+  endpoints,
+  timeInForce,
+} = require('../common/constants.js').binance;
 const BinanceBalanceBook = require('./balance-book.js');
 const BinanceAdapter = require('./adapter');
 
@@ -7,25 +12,23 @@ const getDefaults = (overrides) =>
     {},
     {
       timestamp: Date.now(),
-      timeInForce: 5000,
-      recvWindow: 5000,
+      timeInForce: timeInForce.GOOD_TIL_CANCELED,
+      recvWindow: 2500,
     },
     overrides
   );
 
-
-
 /**
- * LIMIT: make a bid to sell at `price`
- * LIMIT_MAKER: make a bid to buy at `price` ???
- * MARKET: buy/sell certain quantity
- * STOP_LOSS: make market trade when `price` < `stopPrice`
- * STOP_LOSS_LIMIT: make limit bid when `price` < `stopPrice`
- * TAKE_PROFIT: make market trade when `price` > `stopPrice`
- * TAKE_PROFIT_LIMIT: make limit bid when `price` > `stopPrice`
+ * LIMIT: post an order to sell at `price`
+ * LIMIT_MAKER: post an order to buy at `price` ???
  *
- * GET_ORDER
- * DELETE_ORDER
+ * MARKET: buy/sell certain quantity
+ *
+ * STOP_LOSS: post market order when `price` < `stopPrice`
+ * TAKE_PROFIT: post market order when `price` > `stopPrice`
+ *
+ * STOP_LOSS_LIMIT: post limit order when `price` < `stopPrice`
+ * TAKE_PROFIT_LIMIT: post limit order when `price` > `stopPrice`
  *
  * @implements Trader
  */
@@ -35,7 +38,7 @@ class BinanceTrader {
   }
 
   /**
-   * LIMIT: make a bid to sell at `price`
+   * LIMIT: post an order to sell at `price`
    *
    * @param {String} symbol
    * @param {Number} quantity
@@ -51,7 +54,7 @@ class BinanceTrader {
   }
 
   /**
-   * LIMIT_MAKER: make a bid to buy at `price` ???
+   * LIMIT_MAKER: post an order to buy at `price` ???
    *
    * @param {String} symbol
    * @param {Number} quantity
@@ -59,7 +62,7 @@ class BinanceTrader {
    * @return {Promise}
    */
   postLimitMakerOrder({ symbol, quantity, price }) {
-    const side = orderSides.SELL;
+    const side = orderSides.BUY;
     const type = orderTypes.LIMIT_MAKER;
     const endpoint = endpoints.POST_ORDER;
     const params = { symbol, quantity, side, type, price, ...getDefaults() };
@@ -67,44 +70,101 @@ class BinanceTrader {
   }
 
   /**
-   * STOP_LOSS: make market trade when `price` < `stopPrice`
+   * STOP_LOSS: post market order when `price` < `stopPrice`
    *
    * @param {String} symbol
    * @param {Number} quantity
-   * @param {price} price
+   * @param {Number} stopPrice
    * @return {Promise}
    */
-  postLimitMakerOrder({ symbol, quantity, stopPrice }) {
-    const side = orderSides.SELL;
+  postStopLoss({ symbol, quantity, stopPrice }) {
+    const side = orderSides.BUY;
     const type = orderTypes.STOP_LOSS;
     const endpoint = endpoints.POST_ORDER;
-    const params = { symbol, quantity, side, type, price, ...getDefaults() };
+    const params = { symbol, quantity, side, type, stopPrice, ...getDefaults() };
     return this.adapter.post(endpoint, params);
   }
 
   /**
-   * @param {Number} timestamp
+   * TAKE_PROFIT: post market order when `price` > `stopPrice`
+   *
+   * @param {String} symbol
+   * @param {Number} quantity
+   * @param {Number} stopPrice
+   * @return {Promise}
+   */
+  postTakeProfit({ symbol, quantity, stopPrice }) {
+    const side = orderSides.SELL;
+    const type = orderTypes.TAKE_PROFIT;
+    const endpoint = endpoints.POST_ORDER;
+    const params = { symbol, quantity, side, type, stopPrice, ...getDefaults() };
+    return this.adapter.post(endpoint, params);
+  }
+
+  /**
+   * STOP_LOSS_LIMIT: post limit order when `price` < `stopPrice`
+   *
+   * @param {String} symbol
+   * @param {Number} quantity
+   * @param {Number} stopPrice
+   * @param {Number} price
+   * @return {Promise}
+   */
+  postStopLossLimit({ symbol, quantity, price, stopPrice }) {
+    const side = orderSides.SELL;
+    const type = orderTypes.STOP_LOSS_LIMIT;
+    const endpoint = endpoints.POST_ORDER;
+    const params = { symbol, quantity, side, type, price, stopPrice, ...getDefaults() };
+    return this.adapter.post(endpoint, params);
+  }
+
+  /**
+   * TAKE_PROFIT_LIMIT: post limit order when `price` > `stopPrice`
+   *
+   * @param {String} symbol
+   * @param {Number} quantity
+   * @param {Number} stopPrice
+   * @param {Number} price
+   * @return {Promise}
+   */
+  postTakeProfitLimit({ symbol, quantity, price, stopPrice }) {
+    const side = orderSides.SELL;
+    const type = orderTypes.TAKE_PROFIT_LIMIT;
+    const endpoint = endpoints.POST_ORDER;
+    const params = { symbol, quantity, side, type, price, stopPrice, ...getDefaults() };
+    return this.adapter.post(endpoint, params);
+  }
+
+  /**
+   * MARKET: post market order to buy/sell at quantity
+   *
+   * @param {String} symbol
+   * @param {String} side
+   * @param {Number} quantity
+   * @return {Promise}
+   */
+  postMarket({ symbol, quantity, side }) {
+    const type = orderTypes.MARKET;
+    const endpoint = endpoints.POST_ORDER;
+    const params = { symbol, quantity, side, type, ...getDefaults() };
+    return this.adapter.post(endpoint, params);
+  }
+
+  /**
    * @param {String=} symbol
-   * @param {Number=} recvWindow
    * @return {Promise}
    */
   getOpenOrders({ symbol }) {
-    const params = {
-      timestamp: Date.now(),
-      symbol,
-      recvWindow: this.recvWindow,
-    };
+    const params = { symbol, ...getDefaults() };
     const endpoint = endpoints.GET_OPEN_ORDERS;
     return this.adapter.get(endpoint, params);
   }
 
   /**
-   * @param {Number} timestamp
-   * @param {Number=} recvWindow
    * includes current balances
    */
-  getAccountInfo(timestamp = Date.now(), recvWindow = this.recvWindow) {
-    const params = { timestamp, recvWindow };
+  getAccountInfo() {
+    const params = getDefaults();
     const endpoint = endpoints.GET_ACCOUNT_INFO;
     return this.adapter.get(endpoint, params);
   }

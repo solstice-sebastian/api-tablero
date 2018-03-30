@@ -60,9 +60,11 @@ const Helpers = () => {
   };
 
   /**
-   * @param required [key] { type, validator }
+   * @param {Object} required [key] { type, validator }
+   * @param {Object} params to validate
+   * @return {Error[]} errors
    */
-  const validateRequired = (required = {}, params = {}, shouldThrow = false) => {
+  const validateRequired = (required, params, shouldThrow = false) => {
     const requiredKeys = Object.keys(required);
     const errors = [];
 
@@ -74,14 +76,14 @@ const Helpers = () => {
         if (value === undefined) {
           // is required but undefined
           errors.push(`Missing param '${key}'`);
-        } else if (requiredItem.type !== undefined && typeof value !== requiredItem.type) {
-          // is required but wrong type
-          errors.push(`Incorrect type for param '${key}'. Received '${typeof value}'`);
         } else if (
           typeof requiredItem.validator === 'function' &&
           requiredItem.validator(value) === false
         ) {
           errors.push(`Failed validator function for param '${key}'`);
+        } else if (requiredItem.type !== undefined && typeof value !== requiredItem.type) {
+          // is required but wrong type
+          errors.push(`Incorrect type for param '${key}'. Received '${typeof value}'`);
         }
       }
     });

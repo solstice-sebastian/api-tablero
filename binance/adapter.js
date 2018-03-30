@@ -1,7 +1,7 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
 const CryptoJS = require('crypto-js');
-const { toQueryString } = require('../common/helpers.js')();
+const { toQueryString, validateRequired } = require('../common/helpers.js')();
 const Constants = require('../common/constants.js');
 
 const { requestMethods } = Constants;
@@ -9,6 +9,24 @@ const headers = {
   'X-MBX-APIKEY': process.env.API_KEY,
 };
 const apiSecret = process.env.API_SECRET;
+
+const required = {
+  symbol: {
+    type: 'string', // later to be a TickerSymbol
+  },
+  side: {
+    validator: (val) => Object.keys(orderSides).includes(val), // later to be Enum
+  },
+  type: {
+    validator: (val) => Object.keys(orderTypes).includes(val),
+  },
+  quantity: {
+    validator: (val) => val > 0,
+  },
+  timestamp: {
+    validator: (val) => val > 0,
+  },
+};
 
 /**
  * handles endpoints regarding open and historical orders
@@ -36,6 +54,7 @@ class BinanceAdapter {
    * @return {Promise}
    */
   post(endpoint, params) {
+    validateRequired(required, params, true);
     const url = this.getUrl(endpoint, params);
     const method = requestMethods.POST;
     const body = JSON.stringify(params);

@@ -4,13 +4,14 @@ const CryptoJS = require('crypto-js');
 const { toQueryString, validateRequired } = require('../common/helpers.js')();
 const Constants = require('../common/constants.js');
 
-const { requestMethods } = Constants;
+const { requestMethods, binance } = Constants;
+const { orderSides, orderTypes } = binance;
 const headers = {
   'X-MBX-APIKEY': process.env.API_KEY,
 };
 const apiSecret = process.env.API_SECRET;
 
-const required = {
+const postRequirements = {
   symbol: {
     type: 'string', // later to be a TickerSymbol
   },
@@ -54,7 +55,7 @@ class BinanceAdapter {
    * @return {Promise}
    */
   post(endpoint, params) {
-    validateRequired(required, params, true);
+    validateRequired(postRequirements, params, true);
     const url = this.getUrl(endpoint, params);
     const method = requestMethods.POST;
     const body = JSON.stringify(params);

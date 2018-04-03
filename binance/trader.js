@@ -5,7 +5,6 @@ const {
   timeInForce,
 } = require('../common/constants.js').binance;
 const BinanceBalanceBook = require('./balance-book.js');
-const BinanceAdapter = require('./adapter');
 
 const getDefaults = (overrides) =>
   Object.assign(
@@ -33,8 +32,8 @@ const getDefaults = (overrides) =>
  * @implements Trader
  */
 class BinanceTrader {
-  constructor() {
-    this.adapter = new BinanceAdapter();
+  constructor(adapter) {
+    this.adapter = adapter;
   }
 
   /**

@@ -1,21 +1,6 @@
-const {
-  orderTypes,
-  orderSides,
-  endpoints,
-  timeInForce,
-} = require('../common/constants.js').binance;
+const { orderTypes, orderSides, endpoints } = require('../common/constants.js').binance;
 const BinanceBalanceBook = require('./balance-book.js');
-
-const getDefaults = (overrides) =>
-  Object.assign(
-    {},
-    {
-      timestamp: Date.now(),
-      timeInForce: timeInForce.GOOD_TIL_CANCELED,
-      recvWindow: 2500,
-    },
-    overrides
-  );
+const { getDefaults } = require('./helpers.js')();
 
 /**
  * LIMIT: post an order to sell at `price`

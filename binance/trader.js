@@ -29,7 +29,7 @@ class BinanceTrader {
    * @param {price} price
    * @return {Promise}
    */
-  postLimitOrder({ symbol, quantity, price }) {
+  postLimit({ symbol, quantity, price }) {
     const side = orderSides.SELL;
     const type = orderTypes.LIMIT;
     const endpoint = endpoints.POST_ORDER;
@@ -45,7 +45,7 @@ class BinanceTrader {
    * @param {price} price
    * @return {Promise}
    */
-  postLimitMakerOrder({ symbol, quantity, price }) {
+  postLimitMaker({ symbol, quantity, price }) {
     const side = orderSides.BUY;
     const type = orderTypes.LIMIT_MAKER;
     const endpoint = endpoints.POST_ORDER;
@@ -98,7 +98,17 @@ class BinanceTrader {
     const side = orderSides.SELL;
     const type = orderTypes.STOP_LOSS_LIMIT;
     const endpoint = endpoints.POST_ORDER;
-    const params = { symbol, quantity, side, type, price, stopPrice, ...getDefaults() };
+    const { timestamp, timeInForce } = getDefaults();
+    const params = {
+      symbol,
+      quantity,
+      side,
+      type,
+      price,
+      stopPrice,
+      timestamp,
+      timeInForce,
+    };
     return this.adapter.post(endpoint, params);
   }
 
@@ -138,8 +148,9 @@ class BinanceTrader {
    * @param {String=} symbol
    * @return {Promise}
    */
-  getOpenOrders({ symbol }) {
-    const params = { symbol, ...getDefaults() };
+  getOpenOrders({ symbol } = {}) {
+    const { recvWindow, timestamp } = getDefaults();
+    const params = { symbol, recvWindow, timestamp };
     const endpoint = endpoints.GET_OPEN_ORDERS;
     return this.adapter.get(endpoint, params);
   }
@@ -154,7 +165,16 @@ class BinanceTrader {
   }
 
   /**
+   * get the exchange info
+   */
+  getExchangeInfo() {
+    const endpoint = endpoints.GET_EXCHANGE_INFO;
+    return this.adapter.get(endpoint);
+  }
+
+  /**
    * helper method to parse account info into a BinanceBalanceBook
+   * @return {BinanceBalanceBook}
    */
   getBalances() {
     return new Promise((res, rej) => {
@@ -162,7 +182,7 @@ class BinanceTrader {
         .then((response) => response.json())
         .then((data) => new BinanceBalanceBook(data.balances))
         .then((binanceBalanceBook) => {
-          binanceBalanceBook.log();
+          // binanceBalanceBook.log();
           return res(binanceBalanceBook);
         })
         .catch((err) => rej(err));

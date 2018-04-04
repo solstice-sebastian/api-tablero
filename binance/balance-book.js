@@ -5,12 +5,15 @@ class BinanceBalanceBook {
   constructor(balances) {
     this.balances = balances
       .filter((coins) => +coins.free > 0 || +coins.locked > 0)
-      .map(({ asset, free, locked }) => ({ symbol: asset, free: +free, locked: +locked }))
+      .map(({ asset, free, locked }) => ({ asset, free: +free, locked: +locked }))
       .sort((a, b) => (+a.free < +b.free ? 1 : -1));
   }
 
-  getBySymbol(symbol) {
-    return this.balances.find((item) => item.symbol === symbol);
+  /**
+   * @param asset
+   */
+  getAsset(asset) {
+    return this.balances.find((item) => item.asset === asset);
   }
 
   getLocked() {
@@ -24,7 +27,7 @@ class BinanceBalanceBook {
   log() {
     console.log('symbol | free | locked');
     this.balances.forEach((item) => {
-      console.log(`${item.symbol} -> ${item.free} | ${item.locked}`);
+      console.log(`${item.asset} -> ${item.free} | ${item.locked}`);
     });
   }
 }

@@ -7,7 +7,7 @@ const Helpers = () => {
       {
         timestamp: Date.now(),
         timeInForce: Constants.binance.timeInForce.GOOD_TIL_CANCELED,
-        recvWindow: 2500,
+        recvWindow: 5000,
       },
       overrides
     );

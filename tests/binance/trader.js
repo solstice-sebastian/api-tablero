@@ -15,13 +15,13 @@ const adapter = {
   },
 };
 
-test(`postLimitOrder`, (assert) => {
+test(`postLimit`, (assert) => {
   const { recvWindow, timestamp } = getDefaults();
   const symbol = 'ltcbtc';
   const quantity = 42;
   const price = 100;
   const trader = new BinanceTrader(adapter);
-  const actual = trader.postLimitOrder({ symbol, quantity, price });
+  const actual = trader.postLimit({ symbol, quantity, price });
   assert.equal(actual.params.symbol, symbol);
   assert.equal(actual.params.quantity, quantity);
   assert.equal(actual.params.price, price);
@@ -34,13 +34,13 @@ test(`postLimitOrder`, (assert) => {
   assert.end();
 });
 
-test(`postLimitMakerOrder`, (assert) => {
+test(`postLimitMaker`, (assert) => {
   const { recvWindow, timestamp } = getDefaults();
   const symbol = 'ltcbtc';
   const quantity = 42;
   const price = 100;
   const trader = new BinanceTrader(adapter);
-  const actual = trader.postLimitMakerOrder({ symbol, quantity, price });
+  const actual = trader.postLimitMaker({ symbol, quantity, price });
   assert.equal(actual.params.symbol, symbol);
   assert.equal(actual.params.quantity, quantity);
   assert.equal(actual.params.price, price);

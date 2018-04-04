@@ -58,8 +58,7 @@ class BinanceAdapter {
     validateRequired(postRequirements, params, true);
     const url = this.getUrl(endpoint, params);
     const method = requestMethods.POST;
-    const body = JSON.stringify(params);
-    return fetch(url, { method, headers, body });
+    return fetch(url, { method, headers });
   }
 
   /**
@@ -70,6 +69,7 @@ class BinanceAdapter {
    */
   getUrl(endpoint, params) {
     let url = `${this.host}${endpoint}`;
+    // only need to sign if params are required
     if (params !== undefined) {
       const signedQueryString = BinanceAdapter.buildSignedQueryString(params);
       url += `?${signedQueryString}`;
@@ -87,10 +87,15 @@ class BinanceAdapter {
     if (typeof params !== 'object') {
       throw new Error(`getSignature expect object. received: ${typeof params}`);
     }
+    const signature = BinanceAdapter.getSignature(params);
+    return toQueryString(Object.assign({}, params, { signature }));
+  }
+
+  static getSignature(params) {
     const queryString = toQueryString(params);
     const hash = CryptoJS.HmacSHA256(queryString, apiSecret);
     const signature = CryptoJS.enc.Hex.stringify(hash);
-    return toQueryString(Object.assign({}, params, { signature }));
+    return signature;
   }
 }
 

@@ -39,12 +39,13 @@ module.exports = {
       CHANNEL_PREFIX: 'ws',
     },
     endpoints: {
+      GET_EXCHANGE_INFO: '/api/v1/exchangeInfo',
       GET_OPEN_ORDERS: '/api/v3/openOrders',
       GET_SERVER_TIME: '/api/v1/time',
       GET_ACCOUNT_INFO: '/api/v3/account',
       POST_ORDER: '/api/v3/order/test',
-      GET_ORDER: '/api/v3/order',
-      DELETE_ORDER: '/api/v3/order',
+      GET_ORDER: '/api/v3/order/test',
+      DELETE_ORDER: '/api/v3/order/test',
     },
     intervals: {
       ONE_MINUTE: '1m',
@@ -83,7 +84,7 @@ module.exports = {
         AUCTION_MATCH: 'AUCTION_MATCH',
         BREAK: 'BREAK',
       },
-      trade: {
+      order: {
         NEW: 'NEW',
         PARTIALLY_FILLED: 'PARTIALLY_FILLED',
         FILLED: 'FILLED',
@@ -120,6 +121,11 @@ module.exports = {
       GOOD_TIL_CANCELED: 'GTC', // good til canceled
       IMMEDIATE_OR_CANCEL: 'IOC',
       FILL_OR_KILL: 'FOK', // fill or kill
+    },
+    filterTypes: {
+      PRICE_FILTER: 'PRICE_FILTER',
+      LOT_SIZE: 'LOT_SIZE',
+      MIN_NOMINAL: 'MIN_NOMINAL',
     },
   },
 

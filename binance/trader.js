@@ -148,9 +148,9 @@ class BinanceTrader {
    * includes current balances
    */
   getAccountInfo() {
-    const params = getDefaults();
+    const { timestamp } = getDefaults();
     const endpoint = endpoints.GET_ACCOUNT_INFO;
-    return this.adapter.get(endpoint, params);
+    return this.adapter.get(endpoint, { timestamp });
   }
 
   /**

@@ -1,5 +1,5 @@
 const test = require('tape');
-const SimpleMovingAverage = require('../modules/simple-moving-average');
+const SimpleMovingAverage = require('../modules/simple-moving-average.js');
 
 test(`update`, (assert) => {
   const period = 3;
@@ -15,7 +15,7 @@ test(`update`, (assert) => {
   assert.end();
 });
 
-test.only(`get`, (assert) => {
+test(`get`, (assert) => {
   const period = 3;
   const values = [2, 4, 6];
   const { get, update } = SimpleMovingAverage({ period, values });

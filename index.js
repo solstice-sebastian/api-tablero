@@ -55,14 +55,18 @@ const exitTrade = (result) => {
   const startPrice = startTicker.price;
   const endPrice = result.ticker.price;
   const profitLoss = getPercentDiff(startPrice, endPrice, 4) - Constants.TRADE_FEE;
-  const text = `\n\ttrade exited with profitLoss of ${nicePercent(
+  const text = `  '${symbol.toUpperCase()}' trade exited with profitLoss of ${nicePercent(
     profitLoss
-  )}\n\tstartPrice: ${startPrice}\n\tendPrice: ${endPrice}`;
+  )}
+  startPrice: ${startPrice}
+  endPrice: ${endPrice}
+  buffer: ${buffer}`;
+
   log(text);
 
   emailer
     .send({
-      to: 'bujurasta2@gmail.com',
+      to: 'solstice.sebastian@gmail.com',
       text,
     })
     .then(() => process.exit(1));

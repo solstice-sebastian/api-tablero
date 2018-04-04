@@ -60,12 +60,12 @@ const exitTrade = (result) => {
   )}\n\tstartPrice: ${startPrice}\n\tendPrice: ${endPrice}`;
   log(text);
 
-  emailer.send({
-    to: 'bujurasta2@gmail.com',
-    text,
-  });
-
-  process.exit(1);
+  emailer
+    .send({
+      to: 'bujurasta2@gmail.com',
+      text,
+    })
+    .then(() => process.exit(1));
 };
 
 const updateLimitPrice = (prev, curr) => {

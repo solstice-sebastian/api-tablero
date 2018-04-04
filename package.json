@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "sketch": "node local/sketch.js",
-    "test": "tape-watch tests/**/*.js | faucet"
+    "test": "tape-watch tests/*.js tests/**/*.js | faucet"
   },
   "devDependencies": {
     "eslint": "^4.16.0",

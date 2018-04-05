@@ -98,7 +98,6 @@ class BinanceTrader {
     const side = orderSides.SELL;
     const type = orderTypes.STOP_LOSS_LIMIT;
     const endpoint = endpoints.POST_ORDER;
-    const { timestamp, timeInForce } = getDefaults();
     const params = {
       symbol,
       quantity,
@@ -106,8 +105,7 @@ class BinanceTrader {
       type,
       price,
       stopPrice,
-      timestamp,
-      timeInForce,
+      ...getDefaults(),
     };
     return this.adapter.post(endpoint, params);
   }

@@ -56,9 +56,17 @@ class BinanceSymbolInfo {
 
   /**
    * take a target quantity and make it comply with symbol's lot size filter
-   * @param {Number} targetQuantity calculated from engine
+   * @param {Number} targetQty calculated from engine
    */
-  normalizeQuantiry(targetQuantity) {}
+  normalizeQty(targetQty) {
+    const { minQty, maxQty, stepSize } = this.lotSizeFilter;
+    let normalized = Math.max(minQty, targetQty);
+    normalized = Math.min(normalized, maxQty);
+    while (castSatoshi(normalized - minQty) % stepSize !== 0) {
+      normalized = castSatoshi(normalized - Constants.ONE_HUNDRED_SHATOSHIS);
+    }
+    return normalized;
+  }
 }
 
 module.exports = BinanceSymbolInfo;

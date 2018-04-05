@@ -174,7 +174,7 @@ class BinanceTrader {
    * helper method to parse account info into a BinanceBalanceBook
    * @return {BinanceBalanceBook}
    */
-  getBalances() {
+  getBalanceBook() {
     return new Promise((res, rej) => {
       this.getAccountInfo()
         .then((response) => response.json())

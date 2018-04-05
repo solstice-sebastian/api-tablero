@@ -31,8 +31,8 @@ const { castSatoshi } = require('../common/helpers.js')();
 const { filterTypes } = Constants.binance;
 
 class BinanceSymbolInfo {
-  constructor(data) {
-    Object.assign(this, data);
+  constructor(symbolInfo) {
+    Object.assign(this, symbolInfo);
     this.priceFilter = this.filters.find((filter) => filter.filterType === filterTypes.PRICE);
     this.lotSizeFilter = this.filters.find((filter) => filter.filterType === filterTypes.LOT_SIZE);
     this.minNominalFilter = this.filters.find(

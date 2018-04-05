@@ -1,5 +1,5 @@
 /**
- * handles the data structure returned by `getBalances`
+ * handles the data structure returned by `getBalanceBook`
  */
 class BinanceBalanceBook {
   constructor(balances) {

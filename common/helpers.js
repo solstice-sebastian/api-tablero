@@ -95,6 +95,8 @@ const Helpers = () => {
     }
   };
 
+  const castSatoshi = (number) => +number.toFixed(8);
+
   return {
     modByPercent,
     getPercentDiff,
@@ -106,6 +108,7 @@ const Helpers = () => {
     nicePercent,
     toQueryString,
     validateRequired,
+    castSatoshi,
   };
 };
 

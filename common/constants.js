@@ -123,11 +123,13 @@ module.exports = {
       FILL_OR_KILL: 'FOK', // fill or kill
     },
     filterTypes: {
-      PRICE_FILTER: 'PRICE_FILTER',
+      PRICE: 'PRICE',
       LOT_SIZE: 'LOT_SIZE',
       MIN_NOMINAL: 'MIN_NOMINAL',
     },
   },
 
   TRADE_FEE: 0.001,
+  ONE_SHATOSI: 0.00000001,
+  ONE_HUNDRED_SHATOSHIS: 0.00000100,
 };

@@ -154,6 +154,13 @@ class BinanceTrader {
   }
 
   /**
+   *
+   */
+  updateStopLoss(stopLoss) {
+
+  }
+
+  /**
    * includes current balances
    */
   getAccountInfo() {

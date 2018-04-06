@@ -17,10 +17,10 @@ test(`normalizePrice`, (assert) => {
     { filterType: filterTypes.MIN_NOMINAL },
   ];
   const info = new BinanceSymbolInfo({ filters, quotePrecision });
-  assert.equal(info.normalizePrice(2), '2.0000');
-  assert.equal(info.normalizePrice(0.5), '2.0000');
-  assert.equal(info.normalizePrice(2.4), '2.4000');
-  assert.equal(info.normalizePrice(2.45), '2.4000');
+  assert.equal(info.normalizePrice(2), 2);
+  assert.equal(info.normalizePrice(0.5), 2);
+  assert.equal(info.normalizePrice(2.4), 2.4);
+  assert.equal(info.normalizePrice(2.45), 2.4);
   assert.end();
 });
 
@@ -42,9 +42,9 @@ test(`normalizeQty`, (assert) => {
     { filterType: filterTypes.MIN_NOMINAL },
   ];
   const info = new BinanceSymbolInfo({ filters, baseAssetPrecision });
-  assert.equal(info.normalizeQty(2), '2.0000');
-  assert.equal(info.normalizeQty(0.5), '2.0000');
-  assert.equal(info.normalizeQty(2.4), '2.4000');
-  assert.equal(info.normalizeQty(2.45), '2.4000');
+  assert.equal(info.normalizeQty(2), 2);
+  assert.equal(info.normalizeQty(0.5), 2);
+  assert.equal(info.normalizeQty(2.4), 2.4);
+  assert.equal(info.normalizeQty(2.45), 2.4);
   assert.end();
 });

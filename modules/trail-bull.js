@@ -8,9 +8,10 @@ const { noop } = require('../common/helpers.js')();
  * exits trade when correct conditions are met
  * @param {Ticker} startTicker the ticker to start trailing from
  * @param {Number} buffer float representation of a percentage i.e. -0.02 => -2%
- * @param {Function=} action to be called when trade should exit
+ * @param {Function=} onExit to be called when trade should exit
+ * @param {Function=} onChange
  */
-const TrailBull = ({ startTicker, buffer, action = noop, updateLimitPrice = noop }) => {
+const TrailBull = ({ startTicker, buffer, onExit = noop, onChange = noop }) => {
   let limitPrice = modByPercent(startTicker.price, buffer);
 
   /**
@@ -22,13 +23,13 @@ const TrailBull = ({ startTicker, buffer, action = noop, updateLimitPrice = noop
 
     if (ticker.price > 0 && ticker.price < limitPrice) {
       // exit trade
-      action();
+      onExit();
       return { ticker, limitPrice, shouldContinue: false };
     } else if (ticker.price > 0 && Math.abs(percentDiff) > Math.abs(buffer)) {
       // raise limitPrice
       const prevLimitPrice = limitPrice;
       limitPrice = modByPercent(ticker.price, buffer);
-      updateLimitPrice(prevLimitPrice, limitPrice);
+      onChange(prevLimitPrice, limitPrice);
     }
     return { ticker, limitPrice, shouldContinue: true };
   };

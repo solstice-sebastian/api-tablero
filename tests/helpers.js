@@ -1,4 +1,5 @@
 const Helpers = require('../common/helpers.js');
+const Constants = require('../common/constants.js');
 const test = require('tape');
 
 test(`modByPercent`, (assert) => {
@@ -83,5 +84,13 @@ test(`validateRequired`, (assert) => {
     'should return empty array when valid'
   );
   assert.throws(() => validateRequired(required, params, true), 'should throw when flag set');
+  assert.end();
+});
+
+test(`toSatoshi`, (assert) => {
+  const { toSatoshi } = Helpers();
+  assert.equal(toSatoshi(391), 0.00000391);
+  assert.equal(toSatoshi(100), Constants.ONE_HUNDRED_SHATOSHIS);
+  assert.equal(toSatoshi(1), Constants.ONE_SHATOSI);
   assert.end();
 });

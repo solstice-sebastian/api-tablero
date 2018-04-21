@@ -21,11 +21,23 @@ const orderStatuses = require('../common/constants.js').binance.statuses.order;
 
 class BinanceOrder {
   constructor(data) {
-    Object.assign(this, data);
+    Object.assign(this, data, {
+      timestamp: data.time,
+    });
+    if (this.isOpen) {
+      this.qty = this.origQty;
+    } else {
+      this.qty = this.executedQty;
+    }
   }
 
   isOpen() {
     return this.status === orderStatuses.NEW || this.status === orderStatuses.PARTIALLY_FILLED;
+  }
+
+  // 'symbol | price | qty | status';
+  log() {
+    console.log(`${this.symbol} | ${this.price} | ${this.qty} | ${this.status}`);
   }
 }
 

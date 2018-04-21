@@ -64,6 +64,22 @@ test(`BinanceOrderBook`, (assert) => {
       timestamp: 48 * 4,
       side: orderSides.BUY,
     }),
+    new BinanceOrder({
+      // isOpen
+      id: 7,
+      status: statuses.order.PARTIALLY_FILLED,
+      symbol,
+      timestamp: 48 * 4,
+      side: orderSides.BUY,
+    }),
+    new BinanceOrder({
+      // wrong symbol
+      id: 8,
+      status: statuses.order.FILLED,
+      symbol: 'NCASHBTC',
+      timestamp: 48 * 4,
+      side: orderSides.BUY,
+    }),
   ];
 
   const orderBook = new BinanceOrderBook(orders);

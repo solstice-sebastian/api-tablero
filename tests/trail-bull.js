@@ -3,16 +3,20 @@ const TrailBull = require('../modules/trail-bull.js');
 const { modByPercent } = require('../common/helpers.js')();
 
 test(`TrailBull: valid data`, (assert) => {
-  let actionCalled = false;
-  const action = () => {
-    actionCalled = true;
+  let onChangeCount = 0;
+  let onExitCalled = false;
+  const onExit = () => {
+    onExitCalled = true;
+  };
+  const onChange = () => {
+    onChangeCount += 1;
   };
   let price = 0.0042;
   let result;
   const buffer = -0.02;
   const limitPrice = modByPercent(price, buffer); // 0.004116
   const startTicker = { price };
-  const { update } = TrailBull({ startTicker, buffer, action });
+  const { update } = TrailBull({ startTicker, buffer, onExit, onChange });
 
   price -= 0.00001; // price decreases
   result = update({ ticker: { price } });
@@ -23,11 +27,12 @@ test(`TrailBull: valid data`, (assert) => {
   result = update({ ticker: { price } });
   assert.equal(result.limitPrice, modByPercent(price, buffer), 'should update limit price');
   assert.equal(result.shouldContinue, true, 'should continue');
+  assert.equal(onChangeCount, 1, 'should call onChange');
 
   price = result.limitPrice - 0.002; // drops below limit
   result = update({ ticker: { price } });
   assert.equal(result.shouldContinue, false, 'should exit trade');
-  assert.equal(actionCalled, true, 'should call action');
+  assert.equal(onExitCalled, true, 'should call action');
 
   assert.end();
 });
@@ -72,11 +77,7 @@ test(`TrailBull: invalid data`, (assert) => {
 
   price = -42;
   result = update({ ticker: { price } });
-  assert.equal(
-    result.limitPrice,
-    limitPrice,
-    `'${price}' (negative) should NOT update limitPrice`
-  );
+  assert.equal(result.limitPrice, limitPrice, `'${price}' (negative) should NOT update limitPrice`);
   assert.equal(result.shouldContinue, true, `'${price}' (negative) should continue`);
 
   assert.end();

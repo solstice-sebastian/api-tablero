@@ -16,7 +16,7 @@ class BinanceAccountInfo {
         .then((orders) => {
           const accountInfo = Object.assign(this, data, {
             balanceBook: new BinanceBalanceBook(data.balances),
-            openOrders: new BinanceOrderBook(orders),
+            orderBook: new BinanceOrderBook(orders),
           });
           res(accountInfo);
         })

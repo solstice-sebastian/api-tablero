@@ -31,7 +31,7 @@ class BinanceOrderBook {
    * @param symbol
    */
   getSymbol(symbol) {
-    return this.orders.find((order) => order.symbol === symbol);
+    return this.orders.filter((order) => order.symbol === symbol);
   }
 
   getOpen() {

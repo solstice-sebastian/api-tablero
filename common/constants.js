@@ -41,6 +41,7 @@ module.exports = {
     endpoints: {
       GET_EXCHANGE_INFO: '/api/v1/exchangeInfo',
       GET_OPEN_ORDERS: '/api/v3/openOrders',
+      GET_ALL_ORDERS: '/api/v3/allOrders',
       GET_SERVER_TIME: '/api/v1/time',
       GET_ACCOUNT_INFO: '/api/v3/account',
       POST_ORDER: '/api/v3/order',
@@ -132,4 +133,5 @@ module.exports = {
   TRADE_FEE: 0.001,
   ONE_SHATOSI: 0.00000001,
   ONE_HUNDRED_SHATOSHIS: 0.000001,
+  STOP_LIMIT_BUFFER: 0.01 * 0.06, // 0.06% buffer
 };

@@ -1,10 +1,12 @@
 /**
  * handles the data structure returned by `getBalanceBook`
  */
-const fetch = require('node-fetch');
 const Constants = require('../common/constants.js');
 
 class BinanceBalanceBook {
+  /**
+   * @param {Array<Object>=} balances
+   */
   constructor(balances) {
     if (balances !== undefined) {
       this.init(balances);
@@ -39,11 +41,15 @@ class BinanceBalanceBook {
   }
 
   getLocked() {
-    return this.balances.filter((item) => item.locked > 0);
+    return this.balances.filter((item) => item.locked >= 1);
   }
 
   getFree() {
-    return this.balances.filter((item) => item.free > 0);
+    return this.balances.filter((item) => item.free >= 1);
+  }
+
+  getActive() {
+    return this.balances.filter((item) => item.free >= 1 || item.locked >= 1);
   }
 
   log() {

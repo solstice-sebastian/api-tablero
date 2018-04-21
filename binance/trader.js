@@ -1,7 +1,8 @@
-const { orderTypes, orderSides, endpoints } = require('../common/constants.js').binance;
-const BinanceBalanceBook = require('./balance-book.js');
+const Constants = require('../common/constants.js');
+const { modByPercent } = require('../common/helpers.js')();
 const { getDefaults } = require('./helpers.js')();
 
+const { orderTypes, orderSides, endpoints } = Constants.binance;
 /**
  * LIMIT: post an order to sell at `price`
  * LIMIT_MAKER: post an order to buy at `price` ???
@@ -143,54 +144,22 @@ class BinanceTrader {
   }
 
   /**
-   * @param {String=} symbol
-   * @return {Promise}
+   * handles canceling
    */
-  getOpenOrders({ symbol } = {}) {
-    const { recvWindow, timestamp } = getDefaults();
-    const params = { symbol, recvWindow, timestamp };
-    const endpoint = endpoints.GET_OPEN_ORDERS;
-    return this.adapter.get(endpoint, params);
-  }
-
-  /**
-   *
-   */
-  updateStopLoss(stopLoss) {
-
-  }
-
-  /**
-   * includes current balances
-   */
-  getAccountInfo() {
-    const { timestamp } = getDefaults();
-    const endpoint = endpoints.GET_ACCOUNT_INFO;
-    return this.adapter.get(endpoint, { timestamp });
-  }
-
-  /**
-   * get the exchange info
-   */
-  getExchangeInfo() {
-    const endpoint = endpoints.GET_EXCHANGE_INFO;
-    return this.adapter.get(endpoint);
-  }
-
-  /**
-   * helper method to parse account info into a BinanceBalanceBook
-   * @return {BinanceBalanceBook}
-   */
-  getBalanceBook() {
+  updateStopLoss(openOrder, newLimit) {
+    // make stop price slightly above target price
+    const stopPrice = modByPercent(newLimit, Constants.STOP_LIMIT_BUFFER);
+    const price = newLimit;
+    const { symbol, quantity } = openOrder;
     return new Promise((res, rej) => {
-      this.getAccountInfo()
-        .then((response) => response.json())
-        .then((data) => new BinanceBalanceBook(data.balances))
-        .then((binanceBalanceBook) => {
-          // binanceBalanceBook.log();
-          return res(binanceBalanceBook);
+      this.deleteOrder(openOrder.id)
+        .then(() => {
+          const promise = this.postStopLossLimit({ symbol, quantity, price, stopPrice });
+          return res(promise);
         })
-        .catch((err) => rej(err));
+        .catch((err) => {
+          rej(err);
+        });
     });
   }
 }

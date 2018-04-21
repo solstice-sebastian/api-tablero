@@ -91,10 +91,10 @@ class TradeBinance {
       isListening = false;
       const profitLoss = getPercentDiff(this.startTicker.price, curr, 4) - Constants.TRADE_FEE;
       this.trader
-        .updateStopLoss(curr)
-        .then((order) => {
+        .updateStopLoss(this.openOrder, curr)
+        .then((newOrder) => {
           log(
-            `updated limitPrice: ${prev} -> ${order.price} = currentProfitloss: ${nicePercent(
+            `updated limitPrice: ${prev} -> ${newOrder.price} = currentProfitloss: ${nicePercent(
               profitLoss
             )}`
           );

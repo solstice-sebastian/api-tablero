@@ -48,10 +48,7 @@ class BinanceBalanceBook {
   }
 
   getLocked() {
-    return this.balances.filter((item) => {
-      const threshold = item.isLarge ? 0.1 : 1;
-      return item.locked >= threshold;
-    });
+    return this.balances.filter((item) => item.locked > 0);
   }
 
   getFree() {
@@ -62,12 +59,11 @@ class BinanceBalanceBook {
   }
 
   getActive() {
-    return this.balances
-      .filter((item) => {
-        const threshold = item.isLarge ? 0.1 : 1;
-        return item.free >= threshold || item.locked >= threshold;
-      })
-      .map((item) => item.asset);
+    const freeAssets = this.getFree().map((item) => item.asset);
+    const lockedAssets = this.getLocked().map((item) => item.asset);
+    return this.balances.filter(
+      (item) => freeAssets.includes(item.asset) || lockedAssets.includes(item.asset)
+    );
   }
 
   log() {

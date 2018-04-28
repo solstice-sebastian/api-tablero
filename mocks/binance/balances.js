@@ -1,9 +1,4 @@
-const balances = [
-  {
-    asset: 'BTC',
-    free: '0.034132',
-    locked: '0.00000000',
-  },
+const free = [
   {
     asset: 'LTC',
     free: '124.42',
@@ -24,6 +19,35 @@ const balances = [
     free: '1.032',
     locked: '0.00000000',
   },
+];
+
+const inActive = [
+  {
+    asset: 'BTC',
+    free: '0.034132',
+    locked: '0.00000000',
+  },
+
+  {
+    asset: 'ZEC',
+    free: '0.034132',
+    locked: '0.0000',
+  },
+
+  {
+    asset: 'STORJ',
+    free: '0.00934',
+    locked: '0.0000',
+  },
+
+  {
+    asset: 'BTC',
+    free: '0.034132',
+    locked: '0.00000000',
+  },
+];
+
+const locked = [
   {
     asset: 'XLM',
     free: '0.00123',
@@ -32,8 +56,10 @@ const balances = [
   {
     asset: 'XVG',
     free: '0.387',
-    locked: '8763.42',
+    locked: '0.42',
   },
 ];
+
+const balances = [...free, ...locked, ...inActive];
 
 module.exports = () => balances;

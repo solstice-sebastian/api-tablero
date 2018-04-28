@@ -22,6 +22,19 @@ class BinanceExchangeInfo {
     fetch(Constants.binance.endpoints.GET_EXCHANGE_INFO).then((data) => this.init(data));
   }
 
+  // async getLargeAssets() {
+  //   if (this._largeAssets !== null) {
+  //     return new Promise((res, rej) => {
+  //       fetch(Constants.binance.endpoints.GET_TICKER).then((tickers) => {
+  //         this._largeAssets = tickers
+  //           .filter((ticker) => ticker.price >= getBtcUsd())
+  //           .map((ticker) => ticker.symbol);
+  //       });
+  //     });
+  //   }
+  //   return Promise.resolve(this._largeAssets);
+  // }
+
   getSymbolInfo(symbol) {
     return this.symbolInfos.find(
       (symbolInfo) => symbolInfo.symbol.toLowerCase() === symbol.toLowerCase()

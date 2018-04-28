@@ -3,6 +3,8 @@
  */
 const Constants = require('../common/constants.js');
 
+const largeAssets = ['BTC', 'DASH', 'ZEC', 'LTC', 'ETH'];
+
 class BinanceBalanceBook {
   /**
    * @param {Array<Object>=} balances
@@ -16,7 +18,12 @@ class BinanceBalanceBook {
   init(balances) {
     this.balances = balances
       .filter((coins) => +coins.free > 0 || +coins.locked > 0)
-      .map(({ asset, free, locked }) => ({ asset, free: +free, locked: +locked }))
+      .map(({ asset, free, locked }) => ({
+        asset,
+        free: +free,
+        locked: +locked,
+        isLarge: largeAssets.includes(asset),
+      }))
       .sort((a, b) => (+a.free < +b.free ? 1 : -1));
   }
 
@@ -41,16 +48,25 @@ class BinanceBalanceBook {
   }
 
   getLocked() {
-    return this.balances.filter((item) => item.locked >= 1);
+    return this.balances.filter((item) => {
+      const threshold = item.isLarge ? 0.1 : 1;
+      return item.locked >= threshold;
+    });
   }
 
   getFree() {
-    return this.balances.filter((item) => item.free >= 1);
+    return this.balances.filter((item) => {
+      const threshold = item.isLarge ? 0.1 : 1;
+      return item.free >= threshold;
+    });
   }
 
   getActive() {
     return this.balances
-      .filter((item) => item.free >= 1 || item.locked >= 1 || item.asset === 'BTC')
+      .filter((item) => {
+        const threshold = item.isLarge ? 0.1 : 1;
+        return item.free >= threshold || item.locked >= threshold;
+      })
       .map((item) => item.asset);
   }
 

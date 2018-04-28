@@ -2,13 +2,13 @@ const test = require('tape');
 const Constants = require('../../common/constants.js');
 const BinanceOrderBook = require('../../binance/order-book.js');
 const BinanceOrder = require('../../binance/order.js');
-const Mocks = require('../../mocks/mocks.js');
+const Mocks = require('../../mocks/mocker.js');
 
 const { statuses } = Constants.binance;
 
 test(`BinanceOrderBook`, (assert) => {
   const symbol = 'DASHBTC';
-  const orders = Mocks.BinanceOrderBook();
+  const { orders } = Mocks();
   const orderBook = new BinanceOrderBook(orders);
   assert.equal(orderBook.getLastBuyIn(symbol).id, 4);
   assert.end();

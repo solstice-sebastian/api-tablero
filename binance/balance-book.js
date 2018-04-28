@@ -3,7 +3,7 @@
  */
 const Constants = require('../common/constants.js');
 
-const largeAssets = ['BTC', 'DASH', 'ZEC', 'LTC', 'ETH'];
+const largeAssets = ['DASH', 'ZEC', 'LTC', 'ETH'];
 
 class BinanceBalanceBook {
   /**

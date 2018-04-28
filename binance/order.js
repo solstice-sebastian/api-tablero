@@ -35,6 +35,14 @@ class BinanceOrder {
     return this.status === orderStatuses.NEW || this.status === orderStatuses.PARTIALLY_FILLED;
   }
 
+  isFilled() {
+    return this.status === orderStatuses.FILLED;
+  }
+
+  isCancelled() {
+    return this.status === orderStatuses.CANCELED;
+  }
+
   // 'symbol | price | qty | status';
   log() {
     console.log(`${this.symbol} | ${this.price} | ${this.qty} | ${this.status}`);

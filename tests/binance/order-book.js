@@ -2,7 +2,7 @@ const test = require('tape');
 const Constants = require('../../common/constants.js');
 const BinanceOrderBook = require('../../binance/order-book.js');
 const BinanceOrder = require('../../binance/order.js');
-const Mocks = require('../../mocks/mocker.js');
+const Mocks = require('../../mocks/mocks.js');
 
 const { statuses } = Constants.binance;
 

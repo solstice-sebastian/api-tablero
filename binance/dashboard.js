@@ -4,6 +4,24 @@ const Constants = require('../common/constants.js');
 const { getPercentDiff } = require('../common/helpers.js')();
 
 const { endpoints } = Constants.binance;
+
+class BinanceDashboardAsset {
+  /**
+   * @param {String} asset
+   * @param {BinanceOrder} lastBuyIn
+   * @param {Number} currentPrice
+   * @param {Number} currentProfitLoss
+   * @param {Array<BinanceOrder>} openOrders
+   */
+  constructor({ asset, lastBuyIn, currentPrice, currentProfitLoss, openOrders }) {
+    this.asset = asset;
+    this.lastBuyIn = lastBuyIn;
+    this.currentPrice = currentPrice;
+    this.currentProfitLoss = currentProfitLoss;
+    this.openOrders = openOrders;
+  }
+}
+
 /**
  * - active coins
  * - buy in price
@@ -12,37 +30,49 @@ const { endpoints } = Constants.binance;
  * - open order (if available) w/ PL
  */
 class BinanceDashboard {
+  constructor({ base = 'BTC' } = {}) {
+    this.base = base;
+  }
+
   async update() {
-    const info = await BinanceAccountInfo.load();
-    return this.build(info);
+    const { orderBook, balanceBook } = await BinanceAccountInfo.load();
+    const indexedTickers = await this.getTickers();
+    return Promise.Resolve(this.build({ orderBook, balanceBook, indexedTickers }));
   }
 
   /**
    * @param {BinanceOrderBook} orderBook
    * @param {BinanceBalanceBook} balanceBook
+   * @param {Promise<Array<BinanceDashboardAsset>>}
    */
-  async build({ orderBook, balanceBook }) {
-    await this.getTickers();
-    const activeAssets = balanceBook.getActive();
-    const data = activeAssets.reduce((acc, asset) => {
-      const lastBuyIn = orderBook.getLastBuyIn(asset);
-      const currentPrice = this.getPrice(asset);
-      const currentProfitLoss = getPercentDiff(lastBuyIn, currentPrice);
-      const openOrders = orderBook.getOpen(asset);
-      acc[asset] = { asset, lastBuyIn, currentPrice, currentProfitLoss, openOrders };
+  build({ orderBook, balanceBook, indexedTickers }) {
+    const activeAssets = balanceBook.getActive().map((item) => item.asset);
+    if (activeAssets.length === 0) {
+      return Constants.NO_DASHBOARD_ASSETS;
+    }
+
+    return activeAssets.reduce((acc, asset) => {
+      const symbol = `${asset}${this.base}`;
+      const lastBuyIn = orderBook.getLastBuyIn(symbol);
+      if (indexedTickers[symbol] === undefined) {
+        throw new Error(`BinanceDashboard missing ticker for symbol ${symbol}`);
+      }
+      const currentPrice = indexedTickers[symbol].price;
+      const currentProfitLoss = getPercentDiff(lastBuyIn.price, currentPrice);
+      const openOrders = orderBook.getOpen(symbol).map((order) =>
+        Object.assign({}, order, {
+          lockedProfitLoss: getPercentDiff(lastBuyIn.price, order.price),
+        })
+      );
+      acc[asset] = new BinanceDashboardAsset({
+        asset,
+        lastBuyIn,
+        currentPrice,
+        currentProfitLoss,
+        openOrders,
+      });
       return acc;
     }, {});
-    return Promise.Resolve(data);
-  }
-
-  getPrice(symbol) {
-    if (symbol === undefined) {
-      throw new Error('Dashboard#getPrice requires symbol');
-    }
-    if (this.tickers.length === 0) {
-      throw new Error('Dashboard: no tickers');
-    }
-    return this.tickers[`${symbol}BTC`].price;
   }
 
   /**

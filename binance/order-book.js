@@ -58,13 +58,17 @@ class BinanceOrderBook {
     return this.orders.filter((order) => order.isOpen() === true && order.symbol === symbol);
   }
 
+  /**
+   * @param {String} symbol ASSETBASE
+   * @return {BinanceOrder}
+   */
   getLastBuyIn(symbol) {
     if (Array.isArray(this.orders) === false) {
       throw new Error(`OrderBook#getLastBuyIn: orders not initialized`);
     }
     const ordersForSymbol = this.filterBySymbol(symbol);
-    return ordersForSymbol.reduce((prev, curr) => {
-      if (curr.isOpen() === false && curr.side === orderSides.BUY) {
+    const lastBuyIn = ordersForSymbol.reduce((prev, curr) => {
+      if (curr.isFilled() === true && curr.side === orderSides.BUY) {
         if (prev.timestamp === undefined || curr.timestamp > prev.timestamp) {
           return curr;
         }
@@ -72,6 +76,11 @@ class BinanceOrderBook {
       }
       return prev;
     }, {});
+
+    if (lastBuyIn.constructor !== BinanceOrder) {
+      return Constants.NO_ORDER;
+    }
+    return lastBuyIn;
   }
 
   log() {

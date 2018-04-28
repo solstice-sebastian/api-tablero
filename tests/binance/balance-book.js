@@ -1,6 +1,6 @@
 const test = require('tape');
 const BinanceBalanceBook = require('../../binance/balance-book.js');
-const Mocks = require('../../mocks/mocker.js');
+const Mocks = require('../../mocks/mocks.js');
 
 test(`getFree`, (assert) => {
   const { balances } = Mocks();

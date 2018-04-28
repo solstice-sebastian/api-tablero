@@ -6,6 +6,8 @@ module.exports = {
   NO_LIMIT_PRICE: 'No limitPrice',
   NO_PRICE: 'No price',
   NO_TICKER: 'No ticker',
+  NO_ORDER: 'No order',
+  NO_DASHBOARD_ASSETS: 'No dashboard assets',
   INSUFFICIENT_DATA: 'Insufficient data',
 
   MS_PER_SECOND: 1000,

@@ -95,6 +95,15 @@ const Helpers = () => {
     }
   };
 
+  const safeJson = (response) => {
+    if (response.status === 200) {
+      return response.json();
+    }
+    console.log(`response.status:`, response.status);
+    console.log(`response.statusText:`, response.statusText);
+    return response;
+  };
+
   const castSatoshi = (number) => +number.toFixed(8);
 
   const toSatoshi = (number) => +(+number * 0.00000001).toFixed(8);
@@ -112,6 +121,7 @@ const Helpers = () => {
     validateRequired,
     castSatoshi,
     toSatoshi,
+    safeJson,
   };
 };
 

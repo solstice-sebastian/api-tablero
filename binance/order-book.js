@@ -30,17 +30,40 @@ class BinanceOrderBook {
   /**
    * @param symbol
    */
-  getSymbol(symbol) {
+  filterBySymbol(symbol) {
+    if (Array.isArray(this.orders) === false) {
+      throw new Error(`OrderBook#filterBySymbol: orders not initialized`);
+    }
     return this.orders.filter((order) => order.symbol === symbol);
   }
 
-  getOpen() {
-    return this.orders.filter((order) => order.isOpen() === true);
+  /**
+   * @param {Number} orderId
+   */
+  findById(orderId) {
+    if (Array.isArray(this.orders) === false) {
+      throw new Error(`OrderBook#findById: orders not initialized`);
+    }
+    return this.orders.find((order) => order.id === orderId);
+  }
+
+  getOpen(symbol) {
+    if (Array.isArray(this.orders) === false) {
+      throw new Error(`OrderBook#getOpen: orders not initialized`);
+    }
+
+    if (symbol === undefined) {
+      return this.orders.filter((order) => order.isOpen() === true);
+    }
+    return this.orders.filter((order) => order.isOpen() === true && order.symbol === symbol);
   }
 
   getLastBuyIn(symbol) {
-    const orderForSymbol = this.getSymbol(symbol);
-    return orderForSymbol.reduce((prev, curr) => {
+    if (Array.isArray(this.orders) === false) {
+      throw new Error(`OrderBook#getLastBuyIn: orders not initialized`);
+    }
+    const ordersForSymbol = this.filterBySymbol(symbol);
+    return ordersForSymbol.reduce((prev, curr) => {
       if (curr.isOpen() === false && curr.side === orderSides.BUY) {
         if (prev.timestamp === undefined || curr.timestamp > prev.timestamp) {
           return curr;

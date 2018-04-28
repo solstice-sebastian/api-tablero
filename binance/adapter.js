@@ -44,7 +44,7 @@ class BinanceAdapter {
    * @param {Object} params
    * @return {Promise}
    */
-  get(endpoint, params) {
+  async get(endpoint, params) {
     const url = this.getUrl(endpoint, params);
     return fetch(url, { headers });
   }
@@ -54,7 +54,7 @@ class BinanceAdapter {
    * @param {Object} params
    * @return {Promise}
    */
-  post(endpoint, params) {
+  async post(endpoint, params) {
     validateRequired(postRequirements, params, true);
     const url = this.getUrl(endpoint, params);
     const method = requestMethods.POST;

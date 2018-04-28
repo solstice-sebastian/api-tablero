@@ -49,11 +49,13 @@ class BinanceBalanceBook {
   }
 
   getActive() {
-    return this.balances.filter((item) => item.free >= 1 || item.locked >= 1);
+    return this.balances
+      .filter((item) => item.free >= 1 || item.locked >= 1 || item.asset === 'BTC')
+      .map((item) => item.asset);
   }
 
   log() {
-    console.log('symbol | free | locked');
+    console.log('asset | free | locked');
     this.balances.forEach((item) => {
       console.log(`${item.asset} -> ${item.free} | ${item.locked}`);
     });

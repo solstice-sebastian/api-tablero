@@ -1,5 +1,5 @@
 const Constants = require('../common/constants.js');
-const { getDefaults } = require('./helpers.js')();
+const { getDefaults, safeJson } = require('./helpers.js')();
 const BinanceBalanceBook = require('./balance-book.js');
 const BinanceOrderBook = require('./order-book.js');
 
@@ -7,18 +7,22 @@ const { endpoints } = Constants.binance;
 
 class BinanceAccountInfo {
   constructor(adapter) {
+    if (adapter === undefined) {
+      throw new Error('BinanceAccountInfo requires an adapter');
+    }
     this.adapter = adapter;
   }
 
-  init(data) {
+  async init(data) {
     return new Promise((res, rej) => {
       this.getOpenOrders()
+        .then(safeJson)
         .then((orders) => {
-          const accountInfo = Object.assign(this, data, {
+          Object.assign(this, data, {
             balanceBook: new BinanceBalanceBook(data.balances),
             orderBook: new BinanceOrderBook(orders),
           });
-          res(accountInfo);
+          res(this);
         })
         .catch((err) => {
           console.log(`err:`, err);
@@ -30,17 +34,17 @@ class BinanceAccountInfo {
   /**
    * includes current balances
    */
-  load() {
+  async load() {
     const timestamp = Date.now();
     const endpoint = endpoints.GET_ACCOUNT_INFO;
-    return this.adapter.get(endpoint, { timestamp }).then(this.init);
+    return this.adapter.get(endpoint, { timestamp }).then((balances) => this.init(balances));
   }
 
   /**
    * @param {String=} symbol
    * @return {Promise}
    */
-  getOpenOrders({ symbol } = {}) {
+  async getOpenOrders({ symbol } = {}) {
     const { recvWindow, timestamp } = getDefaults();
     const params = { symbol, recvWindow, timestamp };
     const endpoint = endpoints.GET_OPEN_ORDERS;

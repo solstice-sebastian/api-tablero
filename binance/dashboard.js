@@ -42,7 +42,7 @@ class BinanceDashboard {
     if (this.tickers.length === 0) {
       throw new Error('Dashboard: no tickers');
     }
-    return this.tickers[`BTC${symbol}`].price;
+    return this.tickers[`${symbol}BTC`].price;
   }
 
   /**

@@ -21,10 +21,12 @@ class BinanceTickerBook {
     return this;
   }
 
-  load() {
+  load(adapter) {
     const endpoint = endpoints.GET_TICKER;
     return new Promise((res, rej) => {
-      fetch(endpoint)
+      adapter
+        .get(endpoint)
+        .then((response) => response.json())
         .then((tickers) => {
           res(this.init(tickers));
         })

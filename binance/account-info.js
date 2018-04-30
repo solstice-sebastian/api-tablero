@@ -1,5 +1,5 @@
 const Constants = require('../common/constants.js');
-const { getDefaults, safeJson } = require('./helpers.js')();
+const { getDefaults } = require('./helpers.js')();
 const BinanceBalanceBook = require('./balance-book.js');
 const BinanceOrderBook = require('./order-book.js');
 
@@ -13,13 +13,16 @@ class BinanceAccountInfo {
     this.adapter = adapter;
   }
 
-  async init(data) {
+  /**
+   * @param {Object} accountInfo
+   */
+  async init(accountInfo) {
     return new Promise((res, rej) => {
       this.getOpenOrders()
-        .then(safeJson)
+        .then((orders) => orders.json())
         .then((orders) => {
-          Object.assign(this, data, {
-            balanceBook: new BinanceBalanceBook(data.balances),
+          Object.assign(this, accountInfo, {
+            balanceBook: new BinanceBalanceBook(accountInfo.balances),
             orderBook: new BinanceOrderBook(orders),
           });
           res(this);
@@ -37,7 +40,17 @@ class BinanceAccountInfo {
   async load() {
     const timestamp = Date.now();
     const endpoint = endpoints.GET_ACCOUNT_INFO;
-    return this.adapter.get(endpoint, { timestamp }).then((balances) => this.init(balances));
+    return new Promise((res, rej) => {
+      this.adapter
+        .get(endpoint, { timestamp })
+        .then((response) => response.json())
+        .then((accountInfo) => {
+          res(this.init(accountInfo));
+        })
+        .catch((err) => {
+          rej(err);
+        });
+    });
   }
 
   /**

@@ -1,5 +1,6 @@
 const BinanceAccountInfo = require('./account-info.js');
 const BinanceTickerBook = require('./ticker-book.js');
+const BinanceAdapter = require('../binance/adapter.js');
 const Constants = require('../common/constants.js');
 const { getPercentDiff } = require('../common/helpers.js')();
 
@@ -30,18 +31,20 @@ class BinanceDashboardAsset {
 class BinanceDashboard {
   constructor(base = 'BTC') {
     this.base = base;
+    this.adapter = new BinanceAdapter();
   }
 
-  async update() {
-    const { orderBook, balanceBook } = await BinanceAccountInfo.load();
+  async fetch() {
+    const { orderBook, balanceBook } = await new BinanceAccountInfo(this.adapter).load();
     const tickerBook = await this.getTickerBook();
-    return Promise.Resolve(this.build({ orderBook, balanceBook, tickerBook }));
+    return Promise.resolve(this.build({ orderBook, balanceBook, tickerBook }));
   }
 
   /**
    * @param {BinanceOrderBook} orderBook
    * @param {BinanceBalanceBook} balanceBook
-   * @param {Promise<Array<BinanceDashboardAsset>>}
+   * @param {BinanceTickerBook} tickerBook
+   * @return {Promise<Array<BinanceDashboardAsset>>}
    */
   build({ orderBook, balanceBook, tickerBook }) {
     const activeAssets = balanceBook.getActive(tickerBook).map((item) => item.asset);
@@ -77,7 +80,7 @@ class BinanceDashboard {
    * get a ticker price
    */
   async getTickerBook() {
-    this.tickerBook = await new BinanceTickerBook().load();
+    this.tickerBook = await new BinanceTickerBook().load(this.adapter);
     return this.tickerBook;
   }
 }

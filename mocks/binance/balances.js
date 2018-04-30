@@ -19,31 +19,28 @@ const free = [
     free: '1.032',
     locked: '0.00000000',
   },
-];
-
-const inActive = [
   {
     asset: 'BTC',
     free: '0.034132',
     locked: '0.00000000',
   },
+];
 
+const inActive = [
   {
     asset: 'ZEC',
     free: '0.034132',
     locked: '0.0000',
   },
-
   {
     asset: 'STORJ',
     free: '0.00934',
     locked: '0.0000',
   },
-
   {
-    asset: 'BTC',
-    free: '0.034132',
-    locked: '0.00000000',
+    asset: 'XRP',
+    free: '0.01944',
+    locked: '0.0000',
   },
 ];
 

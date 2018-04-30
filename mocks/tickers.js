@@ -9,6 +9,7 @@ const tickers = [
   new Ticker({ symbol: 'XLMBTC', price: 0.00000731 }),
   new Ticker({ symbol: 'DASHBTC', price: 0.1832 }),
   new Ticker({ symbol: 'BTCUSDT', price: 9242.12 }),
+  new Ticker({ symbol: 'ZECBTC', price: 0.01324 }),
 ];
 
 module.exports = () => tickers;

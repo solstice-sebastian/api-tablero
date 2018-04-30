@@ -13,6 +13,7 @@ const server = http.createServer((req, res) => {
     res.end();
   }
 
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
   res.setHeader('Content-Type', 'application/json');
   res.statusCode = 200;
   const dashboard = new BinanceDashboard();

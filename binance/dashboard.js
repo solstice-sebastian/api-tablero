@@ -37,7 +37,8 @@ class BinanceDashboard {
   async fetch() {
     const { orderBook, balanceBook } = await new BinanceAccountInfo(this.adapter).load();
     const tickerBook = await this.getTickerBook();
-    return Promise.resolve(this.build({ orderBook, balanceBook, tickerBook }));
+    const assets = this.build({ orderBook, balanceBook, tickerBook });
+    return Promise.resolve(this.serialize(assets));
   }
 
   /**
@@ -65,15 +66,17 @@ class BinanceDashboard {
           lockedProfitLoss: getPercentDiff(lastBuyIn.price, order.price),
         })
       );
-      acc[asset] = new BinanceDashboardAsset({
-        asset,
-        lastBuyIn,
-        currentPrice,
-        currentProfitLoss,
-        openOrders,
-      });
+      acc.push(
+        new BinanceDashboardAsset({
+          asset,
+          lastBuyIn,
+          currentPrice,
+          currentProfitLoss,
+          openOrders,
+        })
+      );
       return acc;
-    }, {});
+    }, []);
   }
 
   /**
@@ -82,6 +85,19 @@ class BinanceDashboard {
   async getTickerBook() {
     this.tickerBook = await new BinanceTickerBook().load(this.adapter);
     return this.tickerBook;
+  }
+
+  /**
+   * @param {Array<BinanceDashboardAsset>} assets
+   */
+  serialize(assets) {
+    const payload = {
+      dashboard: {
+        id: 1,
+        'dashboard-assets': assets,
+      },
+    };
+    return payload;
   }
 }
 

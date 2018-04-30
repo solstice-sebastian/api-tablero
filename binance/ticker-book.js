@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const Constants = require('../common/constants.js');
 const Ticker = require('../models/ticker.js');
 
-const { endpoints } = Constants;
+const { endpoints } = Constants.binance;
 
 class BinanceTickerBook {
   constructor(tetherSymbol = 'BTCUSDT') {
@@ -44,10 +44,26 @@ class BinanceTickerBook {
     return this.tickers.filter((ticker) => ticker.symbol.startsWith(asset) === true);
   }
 
-  getUsdValue(symbol) {
+  /**
+   * an estimate of the asset price in USD
+   * this is seen to the right of the symbol price in the exchange
+   *
+   * @param {String} symbol
+   */
+  getUsdPriceForSymbol(symbol) {
     const btcPrice = this.indexedTickers[symbol].price;
     const tetherPrice = this.indexedTickers[this.tetherSymbol].price;
     return +(tetherPrice * btcPrice).toFixed(2);
+  }
+
+  /**
+   * get current asset price in BTC
+   *
+   * @param {String} asset
+   */
+  getBtcPriceForAsset(asset) {
+    const ticker = this.indexedTickers[`${asset}BTC`];
+    return ticker !== undefined ? ticker.price : Constants.NO_TICKER;
   }
 }
 

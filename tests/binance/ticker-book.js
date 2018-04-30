@@ -37,13 +37,13 @@ test(`getAsset`, (assert) => {
   assert.end();
 });
 
-test(`getUsdValue`, (assert) => {
+test(`getUsdPriceForSymbol`, (assert) => {
   const usdPrice = 1200;
   const assetPrice = 0.012;
   const tickers = [{ symbol: 'BTCUSDT', price: usdPrice }, { symbol: 'LTCBTC', price: assetPrice }];
   const tickerBook = new BinanceTickerBook().init(tickers);
   const symbol = 'LTCBTC';
-  const actual = tickerBook.getUsdValue(symbol);
+  const actual = tickerBook.getUsdPriceForSymbol(symbol);
   const expected = usdPrice * assetPrice;
   assert.equal(actual, expected);
   assert.end();

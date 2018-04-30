@@ -44,7 +44,7 @@ class BinanceDashboard {
    * @param {Promise<Array<BinanceDashboardAsset>>}
    */
   build({ orderBook, balanceBook, tickerBook }) {
-    const activeAssets = balanceBook.getActive().map((item) => item.asset);
+    const activeAssets = balanceBook.getActive(tickerBook).map((item) => item.asset);
     if (activeAssets.length === 0) {
       return Constants.NO_DASHBOARD_ASSETS;
     }

@@ -1,13 +1,9 @@
-/**
- * handles the data structure returned by `getBalanceBook`
- */
 const Constants = require('../common/constants.js');
-
-const largeAssets = ['DASH', 'ZEC', 'LTC', 'ETH'];
+const BinanceBalance = require('./balance.js');
 
 class BinanceBalanceBook {
   /**
-   * @param {Array<Object>=} balances
+   * @param {Array<BinanceBalance>=}
    */
   constructor(balances) {
     if (balances !== undefined) {
@@ -16,15 +12,7 @@ class BinanceBalanceBook {
   }
 
   init(balances) {
-    this.balances = balances
-      .filter((coins) => +coins.free > 0 || +coins.locked > 0)
-      .map(({ asset, free, locked }) => ({
-        asset,
-        free: +free,
-        locked: +locked,
-        isLarge: largeAssets.includes(asset),
-      }))
-      .sort((a, b) => (+a.free < +b.free ? 1 : -1));
+    this.balances = balances.map((data) => new BinanceBalance(data));
   }
 
   load(adapter) {
@@ -43,33 +31,27 @@ class BinanceBalanceBook {
     return this.balances.find((item) => item.asset === asset);
   }
 
-  getBalance(asset) {
-    return this.getAsset(asset).free;
-  }
-
-  getLocked() {
-    return this.balances.filter((item) => item.locked > 0);
-  }
-
-  getFree() {
+  /**
+   * hides the small assets
+   * (balances valued less than 0.001 BTC)
+   *
+   * @param {BinanceTickerBook}
+   * @return {Array<BinanceBalance>}
+   */
+  getActive(tickerBook) {
+    if (tickerBook === undefined) {
+      throw new Error(`BalanceBook#getActive requires a tickerBook`);
+    }
     return this.balances.filter((item) => {
-      const threshold = item.isLarge ? 0.1 : 1;
-      return item.free >= threshold;
+      const btcValue = tickerBook.getBtcPriceForAsset(item.asset) * item.qty;
+      return btcValue > Constants.MIN_ASSET_BTC_VALUE;
     });
   }
 
-  getActive() {
-    const freeAssets = this.getFree().map((item) => item.asset);
-    const lockedAssets = this.getLocked().map((item) => item.asset);
-    return this.balances.filter(
-      (item) => freeAssets.includes(item.asset) || lockedAssets.includes(item.asset)
-    );
-  }
-
   log() {
-    console.log('asset | free | locked');
+    console.log('asset | qty | free | locked');
     this.balances.forEach((item) => {
-      console.log(`${item.asset} -> ${item.free} | ${item.locked}`);
+      console.log(`${item.asset} -> ${item.qty} | ${item.free} | ${item.locked}`);
     });
   }
 }

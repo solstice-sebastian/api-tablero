@@ -1,9 +1,7 @@
-const fetch = require('node-fetch');
 const BinanceAccountInfo = require('./account-info.js');
+const BinanceTickerBook = require('./ticker-book.js');
 const Constants = require('../common/constants.js');
 const { getPercentDiff } = require('../common/helpers.js')();
-
-const { endpoints } = Constants.binance;
 
 class BinanceDashboardAsset {
   /**
@@ -30,14 +28,14 @@ class BinanceDashboardAsset {
  * - open order (if available) w/ PL
  */
 class BinanceDashboard {
-  constructor({ base = 'BTC' } = {}) {
+  constructor(base = 'BTC') {
     this.base = base;
   }
 
   async update() {
     const { orderBook, balanceBook } = await BinanceAccountInfo.load();
-    const indexedTickers = await this.getTickers();
-    return Promise.Resolve(this.build({ orderBook, balanceBook, indexedTickers }));
+    const tickerBook = await this.getTickerBook();
+    return Promise.Resolve(this.build({ orderBook, balanceBook, tickerBook }));
   }
 
   /**
@@ -45,7 +43,7 @@ class BinanceDashboard {
    * @param {BinanceBalanceBook} balanceBook
    * @param {Promise<Array<BinanceDashboardAsset>>}
    */
-  build({ orderBook, balanceBook, indexedTickers }) {
+  build({ orderBook, balanceBook, tickerBook }) {
     const activeAssets = balanceBook.getActive().map((item) => item.asset);
     if (activeAssets.length === 0) {
       return Constants.NO_DASHBOARD_ASSETS;
@@ -54,10 +52,10 @@ class BinanceDashboard {
     return activeAssets.reduce((acc, asset) => {
       const symbol = `${asset}${this.base}`;
       const lastBuyIn = orderBook.getLastBuyIn(symbol);
-      if (indexedTickers[symbol] === undefined) {
+      if (tickerBook.getSymbol(symbol) === undefined) {
         throw new Error(`BinanceDashboard missing ticker for symbol ${symbol}`);
       }
-      const currentPrice = indexedTickers[symbol].price;
+      const currentPrice = tickerBook.getSymbol(symbol).price;
       const currentProfitLoss = getPercentDiff(lastBuyIn.price, currentPrice);
       const openOrders = orderBook.getOpen(symbol).map((order) =>
         Object.assign({}, order, {
@@ -78,19 +76,9 @@ class BinanceDashboard {
   /**
    * get a ticker price
    */
-  async getTickers() {
-    const endpoint = endpoints.GET_TICKER;
-    return new Promise((res, rej) => {
-      fetch(endpoint)
-        .then((tickers) => {
-          this.tickers = tickers.reduce((acc, ticker) => {
-            acc[ticker.symbol] = ticker;
-            return acc;
-          }, {});
-          res(this.tickers);
-        })
-        .catch((err) => rej(err));
-    });
+  async getTickerBook() {
+    this.tickerBook = await new BinanceTickerBook().load();
+    return this.tickerBook;
   }
 }
 

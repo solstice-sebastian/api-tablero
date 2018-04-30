@@ -40,6 +40,10 @@ class BinanceTickerBook {
     return this.tickers.filter((ticker) => ticker.symbol.endsWith(base) === true);
   }
 
+  getAsset(asset) {
+    return this.tickers.filter((ticker) => ticker.symbol.startsWith(asset) === true);
+  }
+
   getUsdValue(symbol) {
     const btcPrice = this.indexedTickers[symbol].price;
     const tetherPrice = this.indexedTickers[this.tetherSymbol].price;

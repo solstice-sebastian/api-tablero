@@ -42,16 +42,12 @@ class BinanceDashboard {
     const { balanceBook } = await new BinanceAccountInfo(this.adapter).load();
     const tickerBook = await this.getTickerBook();
     const activeBalanceAssets = balanceBook.getActiveAssets(tickerBook);
-    try {
-      const orderBook = await this.getOrderBookForActiveAssets({
-        activeBalanceAssets,
-        limit: 10,
-      });
-      const assets = this.build({ orderBook, activeBalanceAssets, tickerBook });
-      return Promise.resolve(this.serialize(assets));
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    const orderBook = await this.getOrderBookForAssets({
+      assets: [...activeBalanceAssets],
+      limit: 10,
+    });
+    const assets = this.build({ orderBook, activeBalanceAssets, tickerBook });
+    return Promise.resolve(this.serialize(assets));
   }
 
   /**
@@ -103,15 +99,15 @@ class BinanceDashboard {
   /**
    * gets all open orders + latest `limit` orders for each activeAsset/base
    */
-  async getOrderBookForActiveAssets({ activeBalanceAssets, limit }) {
+  async getOrderBookForAssets({ assets, limit }) {
     return new Promise(async (res, rej) => {
       // get openOrders
       const openOrders = await this.getOpenOrders();
-      const activeAssetOrders = [];
+      const assetOrders = [];
 
       const runner = async (asset) => {
         if (asset === undefined) {
-          const orderBook = new BinanceOrderBook([...openOrders, ...activeAssetOrders]);
+          const orderBook = new BinanceOrderBook([...openOrders, ...assetOrders]);
           res(orderBook);
         } else {
           const { recvWindow, timestamp } = getDefaults();
@@ -120,8 +116,8 @@ class BinanceDashboard {
           const endpoint = endpoints.GET_ALL_ORDERS_FOR_SYMBOL;
           try {
             const orders = await this.adapter.get(endpoint, params);
-            activeAssetOrders.push(...orders);
-            const nextAsset = activeBalanceAssets.pop();
+            assetOrders.push(...orders);
+            const nextAsset = assets.pop();
             runner(nextAsset);
           } catch (err) {
             rej(err);
@@ -129,7 +125,7 @@ class BinanceDashboard {
         }
       };
       // initiate runner
-      const nextAsset = activeBalanceAssets.pop();
+      const nextAsset = assets.pop();
       runner(nextAsset);
     });
   }

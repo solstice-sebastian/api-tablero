@@ -21,7 +21,7 @@ test(`build`, (assert) => {
   const balanceBook = new BinanceBalanceBook(balances);
   const activeBalanceAssets = balanceBook.getActiveAssets(tickerBook);
   const result = dashboard.build({ activeBalanceAssets, orderBook, tickerBook });
-  const dashboardAsset = result[asset];
+  const dashboardAsset = result.find((x) => x.asset === asset);
   assert.equal(dashboardAsset.lastBuyIn.constructor, BinanceOrder);
   const currentProfitLoss = 0.55; // 0.002 -> 0.0031 = 55% increase
   assert.equal(dashboardAsset.currentPrice, 0.0031);
@@ -41,7 +41,7 @@ test(`build with open orders`, (assert) => {
   const balanceBook = new BinanceBalanceBook(balances);
   const activeBalanceAssets = balanceBook.getActiveAssets(tickerBook);
   const result = dashboard.build({ activeBalanceAssets, orderBook, tickerBook });
-  const dashboardAsset = result[asset];
+  const dashboardAsset = result.find((x) => x.asset === asset);
   assert.equal(dashboardAsset.lastBuyIn.constructor, BinanceOrder);
   const currentProfitLoss = 0.3; // 30%
   assert.equal(dashboardAsset.currentPrice, 0.0065);

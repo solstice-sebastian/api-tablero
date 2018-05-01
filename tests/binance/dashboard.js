@@ -15,11 +15,12 @@ test(`build`, (assert) => {
   const asset = 'NCASH';
   const base = 'BTC';
   const { orders, balances, tickers } = Mocks();
-  const balanceBook = new BinanceBalanceBook(balances);
   const orderBook = new BinanceOrderBook(orders);
   const dashboard = new BinanceDashboard(base);
   const tickerBook = new BinanceTickerBook().init(tickers);
-  const result = dashboard.build({ balanceBook, orderBook, tickerBook });
+  const balanceBook = new BinanceBalanceBook(balances);
+  const activeBalanceAssets = balanceBook.getActiveAssets(tickerBook);
+  const result = dashboard.build({ activeBalanceAssets, orderBook, tickerBook });
   const dashboardAsset = result[asset];
   assert.equal(dashboardAsset.lastBuyIn.constructor, BinanceOrder);
   const currentProfitLoss = 0.55; // 0.002 -> 0.0031 = 55% increase
@@ -34,11 +35,12 @@ test(`build with open orders`, (assert) => {
   const asset = 'XVG';
   const base = 'BTC';
   const { orders, balances, tickers } = Mocks();
-  const balanceBook = new BinanceBalanceBook(balances);
   const orderBook = new BinanceOrderBook(orders);
   const dashboard = new BinanceDashboard(base);
   const tickerBook = new BinanceTickerBook().init(tickers);
-  const result = dashboard.build({ balanceBook, orderBook, tickerBook });
+  const balanceBook = new BinanceBalanceBook(balances);
+  const activeBalanceAssets = balanceBook.getActiveAssets(tickerBook);
+  const result = dashboard.build({ activeBalanceAssets, orderBook, tickerBook });
   const dashboardAsset = result[asset];
   assert.equal(dashboardAsset.lastBuyIn.constructor, BinanceOrder);
   const currentProfitLoss = 0.3; // 30%

@@ -1,8 +1,12 @@
 const BinanceAccountInfo = require('./account-info.js');
 const BinanceTickerBook = require('./ticker-book.js');
-const BinanceAdapter = require('../binance/adapter.js');
+const BinanceAdapter = require('./adapter.js');
+const BinanceOrderBook = require('./order-book.js');
+const { getDefaults } = require('./helpers.js')();
 const Constants = require('../common/constants.js');
 const { getPercentDiff } = require('../common/helpers.js')();
+
+const { endpoints } = Constants.binance;
 
 class BinanceDashboardAsset {
   /**
@@ -35,10 +39,19 @@ class BinanceDashboard {
   }
 
   async fetch() {
-    const { orderBook, balanceBook } = await new BinanceAccountInfo(this.adapter).load();
+    const { balanceBook } = await new BinanceAccountInfo(this.adapter).load();
     const tickerBook = await this.getTickerBook();
-    const assets = this.build({ orderBook, balanceBook, tickerBook });
-    return Promise.resolve(this.serialize(assets));
+    const activeBalanceAssets = balanceBook.getActiveAssets(tickerBook);
+    try {
+      const orderBook = await this.getOrderBookForActiveAssets({
+        activeBalanceAssets,
+        limit: 10,
+      });
+      const assets = this.build({ orderBook, activeBalanceAssets, tickerBook });
+      return Promise.resolve(this.serialize(assets));
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 
   /**
@@ -47,13 +60,8 @@ class BinanceDashboard {
    * @param {BinanceTickerBook} tickerBook
    * @return {Promise<Array<BinanceDashboardAsset>>}
    */
-  build({ orderBook, balanceBook, tickerBook }) {
-    const activeAssets = balanceBook.getActive(tickerBook).map((item) => item.asset);
-    if (activeAssets.length === 0) {
-      return Constants.NO_DASHBOARD_ASSETS;
-    }
-
-    return activeAssets.reduce((acc, asset) => {
+  build({ orderBook, activeBalanceAssets, tickerBook }) {
+    const activeAssets = activeBalanceAssets.reduce((acc, asset) => {
       const symbol = `${asset}${this.base}`;
       const lastBuyIn = orderBook.getLastBuyIn(symbol);
       if (tickerBook.getSymbol(symbol) === undefined) {
@@ -77,6 +85,11 @@ class BinanceDashboard {
       );
       return acc;
     }, []);
+
+    if (activeAssets.length === 0) {
+      return Constants.NO_DASHBOARD_ASSETS;
+    }
+    return activeAssets;
   }
 
   /**
@@ -85,6 +98,52 @@ class BinanceDashboard {
   async getTickerBook() {
     this.tickerBook = await new BinanceTickerBook().load(this.adapter);
     return this.tickerBook;
+  }
+
+  /**
+   * gets all open orders + latest `limit` orders for each activeAsset/base
+   */
+  async getOrderBookForActiveAssets({ activeBalanceAssets, limit }) {
+    return new Promise(async (res, rej) => {
+      // get openOrders
+      const openOrders = await this.getOpenOrders();
+      const activeAssetOrders = [];
+
+      const runner = async (asset) => {
+        if (asset === undefined) {
+          const orderBook = new BinanceOrderBook([...openOrders, ...activeAssetOrders]);
+          res(orderBook);
+        } else {
+          const { recvWindow, timestamp } = getDefaults();
+          const symbol = `${asset}${this.base}`;
+          const params = { symbol, recvWindow, timestamp, limit };
+          const endpoint = endpoints.GET_ALL_ORDERS_FOR_SYMBOL;
+          try {
+            const orders = await this.adapter.get(endpoint, params);
+            activeAssetOrders.push(...orders);
+            const nextAsset = activeBalanceAssets.pop();
+            runner(nextAsset);
+          } catch (err) {
+            rej(err);
+          }
+        }
+      };
+      // initiate runner
+      const nextAsset = activeBalanceAssets.pop();
+      runner(nextAsset);
+    });
+  }
+
+  /**
+   * @param {String=} symbol
+   * @return {Promise}
+   */
+  async getOpenOrders() {
+    const { recvWindow, timestamp } = getDefaults();
+    const params = { recvWindow, timestamp };
+    const endpoint = endpoints.GET_OPEN_ORDERS;
+    const openOrders = await this.adapter.get(endpoint, params);
+    return openOrders;
   }
 
   /**

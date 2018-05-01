@@ -43,7 +43,7 @@ module.exports = {
     endpoints: {
       GET_EXCHANGE_INFO: '/api/v1/exchangeInfo',
       GET_OPEN_ORDERS: '/api/v3/openOrders',
-      GET_ALL_ORDERS: '/api/v3/allOrders',
+      GET_ALL_ORDERS_FOR_SYMBOL: '/api/v3/allOrders',
       GET_SERVER_TIME: '/api/v1/time',
       GET_ACCOUNT_INFO: '/api/v3/account',
       GET_TICKER: '/api/v3/ticker/price',

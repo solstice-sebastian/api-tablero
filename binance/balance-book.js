@@ -19,7 +19,6 @@ class BinanceBalanceBook {
     const endpoint = Constants.binance.endpoints.GET_ACCOUNT_INFO;
     return adapter
       .get(endpoint)
-      .then((response) => response.json())
       .then((data) => this.init(data.balances))
       .catch((err) => console.log(err));
   }
@@ -46,6 +45,10 @@ class BinanceBalanceBook {
       const btcValue = tickerBook.getBtcPriceForAsset(item.asset) * item.qty;
       return btcValue > Constants.MIN_ASSET_BTC_VALUE;
     });
+  }
+
+  getActiveAssets(tickerBook) {
+    return this.getActive(tickerBook).map((item) => item.asset);
   }
 
   log() {

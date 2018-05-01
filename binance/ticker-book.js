@@ -26,7 +26,6 @@ class BinanceTickerBook {
     return new Promise((res, rej) => {
       adapter
         .get(endpoint)
-        .then((response) => response.json())
         .then((tickers) => {
           res(this.init(tickers));
         })

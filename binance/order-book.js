@@ -18,15 +18,6 @@ class BinanceOrderBook {
     this.orders = orders.map((order) => new BinanceOrder(order));
   }
 
-  load(adapter) {
-    const endpoint = Constants.binance.endpoints.GET_ALL_ORDERS;
-    return adapter
-      .get(endpoint)
-      .then((response) => response.json())
-      .then((data) => this.init(data.orders))
-      .catch((err) => console.log(err));
-  }
-
   /**
    * @param symbol
    */

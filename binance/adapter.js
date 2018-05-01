@@ -46,7 +46,15 @@ class BinanceAdapter {
    */
   async get(endpoint, params) {
     const url = this.getUrl(endpoint, params);
-    return fetch(url, { headers });
+    try {
+      const response = await fetch(url, { headers });
+      if (response.status === Constants.binance.statusCodes.OVER_REQUEST_LIMIT) {
+        throw new Error(`BinanceAdapter#get recieved OVER_REQUEST_LIMIT status`);
+      }
+      return response.json();
+    } catch (err) {
+      throw err;
+    }
   }
 
   /**
@@ -58,7 +66,15 @@ class BinanceAdapter {
     validateRequired(postRequirements, params, true);
     const url = this.getUrl(endpoint, params);
     const method = requestMethods.POST;
-    return fetch(url, { method, headers });
+    try {
+      const response = await fetch(url, { method, headers });
+      if (response.status === Constants.binance.statusCodes.OVER_REQUEST_LIMIT) {
+        throw new Error(`BinanceAdapter#post recieved OVER_REQUEST_LIMIT status`);
+      }
+      return response.json();
+    } catch (err) {
+      throw err;
+    }
   }
 
   /**

@@ -11,7 +11,7 @@ const Mocks = require('../../mocks/mocks.js');
  * { asset, lastBuyIn, currentPrice, currentProfitLoss, openOrders }
  */
 test(`build`, (assert) => {
-  assert.plan(4);
+  assert.plan(5);
   const asset = 'NCASH';
   const base = 'BTC';
   const { orders, balances, tickers } = Mocks();
@@ -19,18 +19,21 @@ test(`build`, (assert) => {
   const dashboard = new BinanceDashboard(base);
   const tickerBook = new BinanceTickerBook().init(tickers);
   const balanceBook = new BinanceBalanceBook(balances);
-  const activeBalanceAssets = balanceBook.getActiveAssets(tickerBook);
-  const result = dashboard.build({ activeBalanceAssets, orderBook, tickerBook });
+  balanceBook.activeAssets = balanceBook.getActiveAssets(tickerBook);
+  const result = dashboard.build({ balanceBook, orderBook, tickerBook });
   const dashboardAsset = result.find((x) => x.asset === asset);
   assert.equal(dashboardAsset.lastBuyIn.constructor, BinanceOrder);
   const currentProfitLoss = 0.55; // 0.002 -> 0.0031 = 55% increase
   assert.equal(dashboardAsset.currentPrice, 0.0031);
   assert.equal(dashboardAsset.currentProfitLoss, currentProfitLoss);
   assert.equal(dashboardAsset.openOrders.length, 1);
+  // find mock balance
+  const mockBalance = balances.find((x) => x.asset === asset);
+  assert.equal(dashboardAsset.balance.qty, mockBalance.qty, 'correct qty');
   assert.end();
 });
 
-test(`build with open orders`, (assert) => {
+test.only(`build with open orders`, (assert) => {
   assert.plan(5);
   const asset = 'XVG';
   const base = 'BTC';
@@ -39,8 +42,8 @@ test(`build with open orders`, (assert) => {
   const dashboard = new BinanceDashboard(base);
   const tickerBook = new BinanceTickerBook().init(tickers);
   const balanceBook = new BinanceBalanceBook(balances);
-  const activeBalanceAssets = balanceBook.getActiveAssets(tickerBook);
-  const result = dashboard.build({ activeBalanceAssets, orderBook, tickerBook });
+  balanceBook.activeAssets = balanceBook.getActiveAssets(tickerBook);
+  const result = dashboard.build({ balanceBook, orderBook, tickerBook });
   const dashboardAsset = result.find((x) => x.asset === asset);
   assert.equal(dashboardAsset.lastBuyIn.constructor, BinanceOrder);
   const currentProfitLoss = 0.3; // 30%

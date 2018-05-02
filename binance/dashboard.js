@@ -10,18 +10,19 @@ const { endpoints } = Constants.binance;
 
 class BinanceDashboardAsset {
   /**
-   * @param {String} asset
+   * @param {BinanceBalance} balance
    * @param {BinanceOrder} lastBuyIn
    * @param {Number} currentPrice
    * @param {Number} currentProfitLoss
    * @param {Array<BinanceOrder>} openOrders
    */
-  constructor({ asset, lastBuyIn, currentPrice, currentProfitLoss, openOrders }) {
-    this.asset = asset;
+  constructor({ balance, lastBuyIn, currentPrice, currentProfitLoss, openOrders }) {
+    this.asset = balance.asset;
     this.lastBuyIn = lastBuyIn;
     this.currentPrice = currentPrice;
     this.currentProfitLoss = currentProfitLoss;
     this.openOrders = openOrders;
+    this.balance = balance;
   }
 }
 
@@ -41,12 +42,12 @@ class BinanceDashboard {
   async fetch() {
     const { balanceBook } = await new BinanceAccountInfo(this.adapter).load();
     const tickerBook = await this.getTickerBook();
-    const activeBalanceAssets = balanceBook.getActiveAssets(tickerBook);
+    balanceBook.activeAssets = balanceBook.getActiveAssets(tickerBook);
     const orderBook = await this.getOrderBookForAssets({
-      assets: [...activeBalanceAssets],
+      assets: [...balanceBook.activeAssets],
       limit: 10,
     });
-    const assets = this.build({ orderBook, activeBalanceAssets, tickerBook });
+    const assets = this.build({ orderBook, balanceBook, tickerBook });
     return Promise.resolve(this.serialize(assets));
   }
 
@@ -56,13 +57,14 @@ class BinanceDashboard {
    * @param {BinanceTickerBook} tickerBook
    * @return {Promise<Array<BinanceDashboardAsset>>}
    */
-  build({ orderBook, activeBalanceAssets, tickerBook }) {
-    const activeAssets = activeBalanceAssets.reduce((acc, asset) => {
+  build({ orderBook, balanceBook, tickerBook }) {
+    const activeAssets = balanceBook.activeAssets.reduce((acc, asset) => {
       const symbol = `${asset}${this.base}`;
       const lastBuyIn = orderBook.getLastBuyIn(symbol);
       if (tickerBook.getSymbol(symbol) === undefined) {
         throw new Error(`BinanceDashboard missing ticker for symbol ${symbol}`);
       }
+      const balance = balanceBook.getAsset(asset);
       const currentPrice = tickerBook.getSymbol(symbol).price;
       const currentProfitLoss = getPercentDiff(lastBuyIn.price, currentPrice);
       const openOrders = orderBook.getOpen(symbol).map((order) =>
@@ -72,11 +74,11 @@ class BinanceDashboard {
       );
       acc.push(
         new BinanceDashboardAsset({
-          asset,
           lastBuyIn,
           currentPrice,
           currentProfitLoss,
           openOrders,
+          balance,
         })
       );
       return acc;

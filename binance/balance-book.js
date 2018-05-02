@@ -25,9 +25,18 @@ class BinanceBalanceBook {
 
   /**
    * @param asset
+   * @return {BinanceBalance} matching asset
    */
   getAsset(asset) {
     return this.balances.find((item) => item.asset === asset);
+  }
+
+  /**
+   * @param {String} asset
+   * @return {Number} combined free + locked
+   */
+  getQty(asset) {
+    return this.getAsset(asset).qty;
   }
 
   /**

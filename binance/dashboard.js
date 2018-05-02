@@ -69,7 +69,7 @@ class BinanceDashboard {
       const currentProfitLoss = getPercentDiff(lastBuyIn.price, currentPrice);
       const openOrders = orderBook.getOpen(symbol).map((order) =>
         Object.assign({}, order, {
-          lockedProfitLoss: getPercentDiff(lastBuyIn.price, order.price),
+          profitLoss: getPercentDiff(lastBuyIn.price, order.price),
         })
       );
       acc.push(

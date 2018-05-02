@@ -33,7 +33,7 @@ test(`build`, (assert) => {
   assert.end();
 });
 
-test.only(`build with open orders`, (assert) => {
+test(`build with open orders`, (assert) => {
   assert.plan(5);
   const asset = 'XVG';
   const base = 'BTC';
@@ -50,6 +50,6 @@ test.only(`build with open orders`, (assert) => {
   assert.equal(dashboardAsset.currentPrice, 0.0065);
   assert.equal(dashboardAsset.currentProfitLoss, currentProfitLoss);
   assert.equal(dashboardAsset.openOrders.length, 1);
-  assert.equal(dashboardAsset.openOrders[0].lockedProfitLoss, 0.2);
+  assert.equal(dashboardAsset.openOrders[0].profitLoss, 0.2);
   assert.end();
 });

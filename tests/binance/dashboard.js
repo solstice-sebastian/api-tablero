@@ -8,10 +8,9 @@ const Mocks = require('../../mocks/mocks.js');
 
 /**
  * BinanceDashboardAsset
- * { asset, lastBuyIn, currentPrice, currentProfitLoss, openOrders }
+ * { lastBuyIn, currentPrice, openOrders }
  */
 test(`build`, (assert) => {
-  assert.plan(5);
   const asset = 'NCASH';
   const base = 'BTC';
   const { orders, balances, tickers } = Mocks();
@@ -23,9 +22,7 @@ test(`build`, (assert) => {
   const result = dashboard.build({ balanceBook, orderBook, tickerBook });
   const dashboardAsset = result.find((x) => x.asset === asset);
   assert.equal(dashboardAsset.lastBuyIn.constructor, BinanceOrder);
-  const currentProfitLoss = 0.55; // 0.002 -> 0.0031 = 55% increase
   assert.equal(dashboardAsset.currentPrice, 0.0031);
-  assert.equal(dashboardAsset.currentProfitLoss, currentProfitLoss);
   assert.equal(dashboardAsset.openOrders.length, 1);
   // find mock balance
   const mockBalance = balances.find((x) => x.asset === asset);
@@ -34,7 +31,6 @@ test(`build`, (assert) => {
 });
 
 test(`build with open orders`, (assert) => {
-  assert.plan(5);
   const asset = 'XVG';
   const base = 'BTC';
   const { orders, balances, tickers } = Mocks();
@@ -46,9 +42,7 @@ test(`build with open orders`, (assert) => {
   const result = dashboard.build({ balanceBook, orderBook, tickerBook });
   const dashboardAsset = result.find((x) => x.asset === asset);
   assert.equal(dashboardAsset.lastBuyIn.constructor, BinanceOrder);
-  const currentProfitLoss = 0.3; // 30%
   assert.equal(dashboardAsset.currentPrice, 0.0065);
-  assert.equal(dashboardAsset.currentProfitLoss, currentProfitLoss);
   assert.equal(dashboardAsset.openOrders.length, 1);
   assert.equal(dashboardAsset.openOrders[0].profitLoss, 0.2);
   assert.end();

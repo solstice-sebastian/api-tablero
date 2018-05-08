@@ -13,14 +13,12 @@ class BinanceDashboardAsset {
    * @param {BinanceBalance} balance
    * @param {BinanceOrder} lastBuyIn
    * @param {Number} currentPrice
-   * @param {Number} currentProfitLoss
    * @param {Array<BinanceOrder>} openOrders
    */
-  constructor({ balance, lastBuyIn, currentPrice, currentProfitLoss, openOrders }) {
+  constructor({ balance, lastBuyIn, currentPrice, openOrders }) {
     this.asset = balance.asset;
     this.lastBuyIn = lastBuyIn;
     this.currentPrice = currentPrice;
-    this.currentProfitLoss = currentProfitLoss;
     this.openOrders = openOrders;
     this.balance = balance;
   }
@@ -66,7 +64,6 @@ class BinanceDashboard {
       }
       const balance = balanceBook.getAsset(asset);
       const currentPrice = tickerBook.getSymbol(symbol).price;
-      const currentProfitLoss = getPercentDiff(lastBuyIn.price, currentPrice);
       const openOrders = orderBook.getOpen(symbol).map((order) =>
         Object.assign({}, order, {
           profitLoss: getPercentDiff(lastBuyIn.price, order.price),
@@ -76,7 +73,6 @@ class BinanceDashboard {
         new BinanceDashboardAsset({
           lastBuyIn,
           currentPrice,
-          currentProfitLoss,
           openOrders,
           balance,
         })

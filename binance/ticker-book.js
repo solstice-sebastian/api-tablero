@@ -1,4 +1,3 @@
-const fetch = require('node-fetch');
 const Constants = require('../common/constants.js');
 const Ticker = require('../models/ticker.js');
 
@@ -65,6 +64,10 @@ class BinanceTickerBook {
   getBtcPriceForAsset(asset) {
     const ticker = this.indexedTickers[`${asset}BTC`];
     return ticker !== undefined ? ticker.price : Constants.NO_TICKER;
+  }
+
+  serialize() {
+    return JSON.stringify(this.indexedTickers);
   }
 }
 

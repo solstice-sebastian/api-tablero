@@ -146,6 +146,13 @@ module.exports = {
     },
   },
 
+  coinigy: {
+    API_HOST: 'https://api.coinigy.com',
+    endpoints: {
+      GET_FAVORITES: '/api/v1/userWatchList',
+    },
+  },
+
   TRADE_FEE: 0.001,
   ONE_SHATOSI: 0.00000001,
   ONE_HUNDRED_SHATOSHIS: 0.000001,

@@ -1,23 +1,12 @@
 const Constants = require('../common/constants.js');
-const Ticker = require('../models/ticker.js');
+const TickerBook = require('../models/ticker-book.js');
 
 const { endpoints } = Constants.binance;
 
-class BinanceTickerBook {
+class BinanceTickerBook extends TickerBook {
   constructor(tetherSymbol = 'BTCUSDT') {
+    super();
     this.tetherSymbol = tetherSymbol;
-  }
-
-  /**
-   * to bypass the load
-   */
-  init(tickers) {
-    this.tickers = tickers;
-    this.indexedTickers = tickers.reduce((acc, curr) => {
-      acc[curr.symbol] = new Ticker(curr);
-      return acc;
-    }, {});
-    return this;
   }
 
   load(adapter) {
@@ -30,18 +19,6 @@ class BinanceTickerBook {
         })
         .catch((err) => rej(err));
     });
-  }
-
-  getSymbol(symbol) {
-    return this.indexedTickers[symbol];
-  }
-
-  getBase(base) {
-    return this.tickers.filter((ticker) => ticker.symbol.endsWith(base) === true);
-  }
-
-  getAsset(asset) {
-    return this.tickers.filter((ticker) => ticker.symbol.startsWith(asset) === true);
   }
 
   /**
@@ -64,10 +41,6 @@ class BinanceTickerBook {
   getBtcPriceForAsset(asset) {
     const ticker = this.indexedTickers[`${asset}BTC`];
     return ticker !== undefined ? ticker.price : Constants.NO_TICKER;
-  }
-
-  serialize() {
-    return JSON.stringify(this.indexedTickers);
   }
 }
 

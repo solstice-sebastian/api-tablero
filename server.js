@@ -2,7 +2,7 @@ require('dotenv').config();
 const http = require('http');
 const Constants = require('./common/constants.js');
 const BinanceDashboard = require('./binance/dashboard.js');
-const BinanceAdapter = require('./binance/ticker-book.js');
+const BinanceAdapter = require('./binance/adapter.js');
 const BinanceTickerBook = require('./binance/ticker-book.js');
 
 const { requestMethods } = Constants;
@@ -19,8 +19,8 @@ const server = http.createServer((req, res) => {
     const dashboard = new BinanceDashboard();
     dashboard
       .fetch()
-      .then((data) => {
-        res.write(JSON.stringify(data));
+      .then((dashboardData) => {
+        res.write(dashboardData.serialize());
         res.end();
       })
       .catch((err) => console.log(`err:`, err));

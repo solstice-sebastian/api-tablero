@@ -46,7 +46,7 @@ class BinanceDashboard {
       limit: 10,
     });
     const assets = this.build({ orderBook, balanceBook, tickerBook });
-    return Promise.resolve(this.serialize(assets));
+    return Promise.resolve(assets);
   }
 
   /**
@@ -150,7 +150,7 @@ class BinanceDashboard {
         'dashboard-assets': assets,
       },
     };
-    return payload;
+    return JSON.stringify(payload);
   }
 }
 

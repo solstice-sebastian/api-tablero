@@ -33,6 +33,19 @@ module.exports = {
     GDAX: 'GDAX',
   },
 
+  gdax: {
+    // sandbox
+    SANDBOX_HOST: 'https://public.sandbox.gdax.com',
+    API_HOST: 'https://api-public.sandbox.gdax.com',
+    stream: {
+      HOSTNAME: 'ws-feed-public.sandbox.gdax.com',
+      CHANNEL_PREFIX: 'wss',
+    },
+
+    // production
+    // API_HOST: 'https://api.gdax.com',
+  },
+
   binance: {
     API_HOST: 'https://api.binance.com',
     stream: {

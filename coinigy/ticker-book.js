@@ -13,8 +13,8 @@ class CoinigyTickerBook extends TickerBook {
     this.map = {};
   }
 
-  onUpdate(favorites) {
-    favorites.forEach((favorite) => {
+  onUpdate({ data }) {
+    data.forEach((favorite) => {
       const ticker = new Ticker(favorite);
       const { symbol } = ticker;
       if (this.map[symbol] === undefined) {

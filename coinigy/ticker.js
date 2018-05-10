@@ -1,5 +1,4 @@
 const Constants = require('../common/constants.js');
-const SimpleMovingAverage = require('../modules/simple-moving-average.js');
 
 /**
  * @implements Ticker
@@ -12,7 +11,7 @@ const SimpleMovingAverage = require('../modules/simple-moving-average.js');
  */
 
 class CoinigyTicker {
-  constructor(data = {}, period = 30) {
+  constructor(data = {}) {
     this.id = +data.exchmkt_id;
     this.mktName = data.mkt_name;
     this.exchangeCode = data.exch_code;
@@ -32,21 +31,6 @@ class CoinigyTicker {
     this.timestamp = new Date(data.server_time).getTime() - Constants.MS_PER_HOUR * 8;
     this.volume = +data.current_volume;
     this.baseVolume = this.btcVolume;
-
-    // moving averages
-    this.volumeList = SimpleMovingAverage({ period, values: [this.volume] });
-    this.baseVolumeList = SimpleMovingAverage({ period, values: [this.baseVolume] });
-    this.priceList = SimpleMovingAverage({ period, values: [this.price] });
-  }
-
-  update(ticker) {
-    this.price = ticker.price;
-    this.volume = ticker.volume;
-    this.baseVolume = ticker.baseVolume;
-
-    this.priceList.update(ticker.price);
-    this.volumeList.update(ticker.volume);
-    this.baseVolumeList.update(ticker.baseVolume);
   }
 }
 

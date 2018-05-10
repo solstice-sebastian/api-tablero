@@ -35,6 +35,7 @@ class BinanceDashboard {
   constructor(base = 'BTC') {
     this.base = base;
     this.adapter = new BinanceAdapter();
+    this.dashboardAssets = [];
   }
 
   async fetch() {
@@ -83,6 +84,7 @@ class BinanceDashboard {
     if (activeAssets.length === 0) {
       return Constants.NO_DASHBOARD_ASSETS;
     }
+    this.dashboardAssets = [...activeAssets];
     return activeAssets;
   }
 
@@ -143,7 +145,7 @@ class BinanceDashboard {
   /**
    * @param {Array<BinanceDashboardAsset>} assets
    */
-  serialize(assets) {
+  serialize(assets = this.dashboardAssets) {
     const payload = {
       dashboard: {
         id: 1,

@@ -13,6 +13,13 @@ const Emailer = ({ username, password, host, ssl = true }) => {
     ssl,
   });
 
+  /**
+   * @param {String=} text
+   * @param {String=} from
+   * @param {String} to
+   * @param {String=} subject
+   * @param {Array<Any>} attachment
+   */
   const send = ({
     text = 'email from mi-simulador',
     from = 'mi-simulador@gmail.com',

@@ -7,9 +7,9 @@ const Constants = require('../common/constants.js');
 const { requestMethods, binance } = Constants;
 const { orderSides, orderTypes } = binance;
 const headers = {
-  'X-MBX-APIKEY': process.env.API_KEY,
+  'X-MBX-APIKEY': process.env.BINANCE_API_KEY,
 };
-const apiSecret = process.env.API_SECRET;
+const apiSecret = process.env.BINANCE_API_SECRET;
 
 const postRequirements = {
   symbol: {

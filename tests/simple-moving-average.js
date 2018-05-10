@@ -15,12 +15,12 @@ test(`update`, (assert) => {
   assert.end();
 });
 
-test(`get`, (assert) => {
+test(`calc`, (assert) => {
   const period = 3;
   const values = [2, 4, 6];
-  const { get, update } = SimpleMovingAverage({ period, values });
-  assert.equal(get(), 4);
+  const { calc, update } = SimpleMovingAverage({ period, values });
+  assert.equal(calc(), 4);
   update(8);
-  assert.equal(get(), 6);
+  assert.equal(calc(), 6);
   assert.end();
 });

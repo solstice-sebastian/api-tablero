@@ -64,11 +64,20 @@ class CoinigyTickerBook {
     return this.map;
   }
 
+  getMaps() {
+    return {
+      tickers: this.getMap(),
+      priceSma: this.priceSma,
+      volumeSma: this.volumeSma,
+      baseVolumeSma: this.baseVolumeSma,
+    };
+  }
+
   getTicker(symbol) {
     return this.map[symbol];
   }
 
-  getSmas(symbol) {
+  getSmasValues(symbol) {
     return {
       priceSma: this.priceSma[symbol],
       volumeSma: this.volumeSma[symbol],
@@ -77,7 +86,7 @@ class CoinigyTickerBook {
   }
 
   getData(symbol) {
-    const data = this.getSmas(symbol);
+    const data = this.getSmasValues(symbol);
     const ticker = this.getTicker(symbol);
     return {
       price: ticker.price,

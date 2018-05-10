@@ -11,9 +11,11 @@ const PORT = process.env.PORT || 5000;
 const username = process.env.EMAIL_USERNAME;
 const password = process.env.EMAIL_PASSWORD;
 const host = process.env.EMAIL_HOST;
+const recipient = process.env.EMAIL_RECIPIENT;
 
 const tickerBook = new CoinigyTickerBook();
 const emailer = Emailer({ username, password, host });
+emailer.setRecipient(recipient);
 
 const PRICE_THRESHOLD = 0.03; // 3%
 const VOLUME_THRESHOLD = 0.03; // 3%
@@ -74,14 +76,15 @@ const callback = (tb) => {
 };
 
 tickerBook.poll({ callback });
-// server.listen(PORT);
+server.listen(PORT);
 
 // const url = 'http://localhost:3000/dashboards';
 // http.get(url);
 
 // test email
-const testEmailer = Emailer({ username, password, host });
-testEmailer.send({
-  to: 'bujurasta2@gmail.com',
-  text: 'hello!',
-});
+// const testEmailer = Emailer({ username, password, host });
+// testEmailer.setRecipient('aric.allen2@gmail.com');
+// testEmailer.send({
+//   // to: 'bujurasta2@gmail.com',
+//   text: 'hello!',
+// });

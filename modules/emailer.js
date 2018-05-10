@@ -13,6 +13,12 @@ const Emailer = ({ username, password, host, ssl = true }) => {
     ssl,
   });
 
+  let _recipient;
+
+  const setRecipient = (recipient) => {
+    _recipient = recipient;
+  }
+
   /**
    * @param {String=} text
    * @param {String=} from
@@ -23,7 +29,7 @@ const Emailer = ({ username, password, host, ssl = true }) => {
   const send = ({
     text = 'email from mi-simulador',
     from = 'mi-simulador@gmail.com',
-    to,
+    to = _recipient,
     subject = `MiSimulador update ${datetime()}`,
     attachment = [],
   }) =>
@@ -37,7 +43,7 @@ const Emailer = ({ username, password, host, ssl = true }) => {
       });
     });
 
-  return { send };
+  return { send, setRecipient };
 };
 
 module.exports = Emailer;

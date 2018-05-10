@@ -77,14 +77,3 @@ const callback = (tb) => {
 
 tickerBook.poll({ callback });
 server.listen(PORT);
-
-// const url = 'http://localhost:3000/dashboards';
-// http.get(url);
-
-// test email
-// const testEmailer = Emailer({ username, password, host });
-// testEmailer.setRecipient('aric.allen2@gmail.com');
-// testEmailer.send({
-//   // to: 'bujurasta2@gmail.com',
-//   text: 'hello!',
-// });

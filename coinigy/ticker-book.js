@@ -81,9 +81,18 @@ class CoinigyTickerBook extends TickerBook {
   }
 
   getData(symbol) {
-    return Object.assign({}, this.getSmas(symbol), {
-      ticker: this.getTicker(symbol),
-    });
+    const data = this.getSmas(symbol);
+    const ticker = this.getTicker(symbol);
+    return {
+      price: ticker.price,
+      priceSma: data.priceSma.get(),
+
+      volume: ticker.volume,
+      volumeSma: data.volumeSma.get(),
+
+      baseVolume: ticker.baseVolume,
+      baseVolumeSma: data.baseVolumeSma.get(),
+    };
   }
 
   async getFavorites() {

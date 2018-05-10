@@ -1,16 +1,14 @@
-const TickerBook = require('../models/ticker-book.js');
 const Ticker = require('./ticker.js');
 const Adapter = require('./adapter.js');
 const Constants = require('../common/constants.js');
 const SimpleMovingAverage = require('../modules/simple-moving-average.js');
 const { noop } = require('../common/helpers.js')();
 
-// const TIME_BETWEEN_REQUESTS = 1000 * 15;
-const TIME_BETWEEN_REQUESTS = 1000;
+const TIME_BETWEEN_REQUESTS = 1000 * 15;
+const period = 30;
 
-class CoinigyTickerBook extends TickerBook {
+class CoinigyTickerBook {
   constructor() {
-    super();
     this.adapter = new Adapter();
 
     this.map = {};
@@ -28,8 +26,6 @@ class CoinigyTickerBook extends TickerBook {
         // new map
         this.map[symbol] = ticker;
         const { price, volume, baseVolume } = ticker;
-        // const period = 30;
-        const period = 3;
 
         // moving averages
         this.volumeSma[symbol] = {};
@@ -85,13 +81,13 @@ class CoinigyTickerBook extends TickerBook {
     const ticker = this.getTicker(symbol);
     return {
       price: ticker.price,
-      priceSma: data.priceSma.get(),
+      priceSma: data.priceSma.calc(),
 
       volume: ticker.volume,
-      volumeSma: data.volumeSma.get(),
+      volumeSma: data.volumeSma.calc(),
 
       baseVolume: ticker.baseVolume,
-      baseVolumeSma: data.baseVolumeSma.get(),
+      baseVolumeSma: data.baseVolumeSma.calc(),
     };
   }
 
@@ -108,6 +104,13 @@ class CoinigyTickerBook extends TickerBook {
     }, timeout);
 
     this.getFavorites().then(callback);
+  }
+
+  serialize() {
+    const payload = {
+      tickers: this.getMap(),
+    };
+    return JSON.stringify(payload);
   }
 }
 

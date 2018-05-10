@@ -8,7 +8,7 @@ const SimpleMovingAverage = ({ period = 30, values = [] }) => {
    * calculate and return the average
    * @return {Null|Number} simple moving average if enough values else null
    */
-  const get = () => {
+  const calc = () => {
     if (_values.length < period) {
       return null;
     }
@@ -36,7 +36,7 @@ const SimpleMovingAverage = ({ period = 30, values = [] }) => {
     return _values;
   };
 
-  return { get, update };
+  return { calc, update };
 };
 
 module.exports = SimpleMovingAverage;

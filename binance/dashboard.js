@@ -6,7 +6,7 @@ const { getDefaults } = require('./helpers.js')();
 const Constants = require('../common/constants.js');
 const { getPercentDiff } = require('../common/helpers.js')();
 
-const { endpoints } = Constants.binance;
+const { endpoints, orderSides } = Constants.binance;
 
 class BinanceDashboardAsset {
   /**
@@ -101,13 +101,13 @@ class BinanceDashboard {
    */
   async getOrderBookForAssets({ assets, limit }) {
     return new Promise(async (res, rej) => {
-      // get openOrders
-      const openOrders = await this.getOpenOrders();
+      // get openBuyOrders since there could be an open order that is not for an 'active' asset
+      const openBuyOrders = await this.getOpenBuyOrders();
       const assetOrders = [];
 
       const runner = async (asset) => {
         if (asset === undefined) {
-          const orderBook = new BinanceOrderBook([...openOrders, ...assetOrders]);
+          const orderBook = new BinanceOrderBook([...openBuyOrders, ...assetOrders]);
           res(orderBook);
         } else {
           const { recvWindow, timestamp } = getDefaults();
@@ -134,12 +134,12 @@ class BinanceDashboard {
    * @param {String=} symbol
    * @return {Promise}
    */
-  async getOpenOrders() {
+  async getOpenBuyOrders() {
     const { recvWindow, timestamp } = getDefaults();
     const params = { recvWindow, timestamp };
     const endpoint = endpoints.GET_OPEN_ORDERS;
     const openOrders = await this.adapter.get(endpoint, params);
-    return openOrders;
+    return openOrders.filter((order) => order.side === orderSides.BUY);
   }
 
   /**

@@ -24,7 +24,7 @@
     "tape": "^4.9.0",
     "tape-watch": "^2.3.0"
   },
-  "author": "Aric Allen",
+  "author": "Solstice Sebastian",
   "license": "MIT",
   "dependencies": {
     "change-case": "^3.0.2",
@@ -38,6 +38,7 @@
     "node-fetch": "^2.1.1",
     "nodemon": "^1.17.3",
     "qs": "^6.5.2",
-    "ws": "^5.1.0"
+    "ws": "^5.1.0",
+    "@bit/solstice.sebastian.common.logger": "file:./components/common/logger"
   }
 }

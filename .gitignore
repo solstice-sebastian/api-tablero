@@ -11,3 +11,7 @@ logs/
 *.zip
 data/
 trade-logs/
+
+# bit
+components/
+.bitmap

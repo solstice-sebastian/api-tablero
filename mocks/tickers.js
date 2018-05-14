@@ -1,6 +1,7 @@
 const Ticker = require('../models/ticker.js');
+const { modByPercent } = require('../common/helpers.js')();
 
-const tickers = [
+let tickers = [
   new Ticker({ symbol: 'NCASHBTC', price: 0.0031 }),
   new Ticker({ symbol: 'XVGBTC', price: 0.0065 }),
   new Ticker({ symbol: 'ETHBTC', price: 0.2212 }),
@@ -12,4 +13,20 @@ const tickers = [
   new Ticker({ symbol: 'ZECBTC', price: 0.01324 }),
 ];
 
-module.exports = () => tickers;
+const fetch = () => {
+  tickers = tickers.map((ticker) => {
+    let newPrice;
+    if (Math.random() > 0.5) {
+      newPrice = modByPercent(ticker.price, 0.025); // increase 0.25%
+    } else {
+      newPrice = modByPercent(ticker.price, -0.025); // decrease 0.25%
+    }
+    return new Ticker({
+      symbol: ticker.symbol,
+      price: newPrice,
+    });
+  });
+  return tickers;
+};
+
+module.exports = { tickers, fetch };

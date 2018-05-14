@@ -25,7 +25,7 @@ class SmaAnalytic {
       const sma = data[this.smaKey];
       const value = data[this.valueKey];
       if (getPercentDiff(value, sma) > this.threshold) {
-        this.notify({ sma, value, symbol });
+        this.notify({ sma, value, ticker });
       }
     });
   }

@@ -107,7 +107,7 @@ class CoinigyTickerBook {
     return Promise.resolve(this);
   }
 
-  poll({ timeout = TIME_BETWEEN_REQUESTS, callback = noop }) {
+  poll({ timeout = TIME_BETWEEN_REQUESTS, callback = noop } = {}) {
     setInterval(() => {
       this.getFavorites().then(callback);
     }, timeout);

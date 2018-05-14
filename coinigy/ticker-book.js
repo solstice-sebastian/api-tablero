@@ -117,7 +117,7 @@ class CoinigyTickerBook {
 
   serialize() {
     const payload = {
-      tickers: this.getMap(),
+      tickers: this.getList(),
     };
     return JSON.stringify(payload);
   }

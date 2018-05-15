@@ -106,24 +106,22 @@ module.exports = {
       // malformed requests are 4XX
       // internal errors are 5XX
     },
-    statuses: {
-      symbol: {
-        PRE_TRADING: 'PRE_TRADING',
-        TRADING: 'TRADING',
-        POST_TRADING: 'POST_TRADING',
-        END_OF_DAY: 'END_OF_DAY',
-        HALT: 'HALT',
-        AUCTION_MATCH: 'AUCTION_MATCH',
-        BREAK: 'BREAK',
-      },
-      order: {
-        NEW: 'NEW',
-        PARTIALLY_FILLED: 'PARTIALLY_FILLED',
-        FILLED: 'FILLED',
-        CANCELED: 'CANCELED',
-        REJECTED: 'REJECTED',
-        EXPIRED: 'EXPIRED',
-      },
+    symbolStatuses: {
+      PRE_TRADING: 'PRE_TRADING',
+      TRADING: 'TRADING',
+      POST_TRADING: 'POST_TRADING',
+      END_OF_DAY: 'END_OF_DAY',
+      HALT: 'HALT',
+      AUCTION_MATCH: 'AUCTION_MATCH',
+      BREAK: 'BREAK',
+    },
+    orderStatuses: {
+      NEW: 'NEW',
+      PARTIALLY_FILLED: 'PARTIALLY_FILLED',
+      FILLED: 'FILLED',
+      CANCELED: 'CANCELED',
+      REJECTED: 'REJECTED',
+      EXPIRED: 'EXPIRED',
     },
     orderTypes: {
       LIMIT: 'LIMIT',

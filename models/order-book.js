@@ -1,5 +1,3 @@
-const Constants = require('../common/constants.js');
-
 class GdaxOrderBook {
   /**
    * @param {Array<Order>} orders
@@ -8,6 +6,7 @@ class GdaxOrderBook {
     if (Array.isArray(orders) === false) {
       throw new Error('OrderBook requires an Array<Order>');
     }
+    this.orders = orders;
   }
 
   /**

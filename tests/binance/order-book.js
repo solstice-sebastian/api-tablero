@@ -4,7 +4,7 @@ const BinanceOrderBook = require('../../binance/order-book.js');
 const BinanceOrder = require('../../binance/order.js');
 const Mocks = require('../../mocks/mocks.js');
 
-const { statuses } = Constants.binance;
+const { orderStatuses } = Constants.binance;
 
 test(`BinanceOrderBook`, (assert) => {
   const symbol = 'DASHBTC';
@@ -19,17 +19,17 @@ test(`getOpen`, (assert) => {
   const orders = [
     new BinanceOrder({
       id: 1,
-      status: statuses.order.FILLED,
+      status: orderStatuses.FILLED,
       symbol,
     }),
     new BinanceOrder({
       id: 42,
-      status: statuses.order.NEW,
+      status: orderStatuses.NEW,
       symbol: 'LTCBTC',
     }),
     new BinanceOrder({
       id: 4,
-      status: statuses.order.PARTIALLY_FILLED,
+      status: orderStatuses.PARTIALLY_FILLED,
       symbol,
     }),
   ];
@@ -46,17 +46,17 @@ test(`getOpen(symbol)`, (assert) => {
   const orders = [
     new BinanceOrder({
       id: 1,
-      status: statuses.order.FILLED,
+      status: orderStatuses.FILLED,
       symbol,
     }),
     new BinanceOrder({
       id: 42,
-      status: statuses.order.NEW,
+      status: orderStatuses.NEW,
       symbol: 'LTCBTC',
     }),
     new BinanceOrder({
       id: 4,
-      status: statuses.order.PARTIALLY_FILLED,
+      status: orderStatuses.PARTIALLY_FILLED,
       symbol,
     }),
   ];

@@ -1,5 +1,5 @@
 const BinanceOrder = require('../../binance/order.js');
-const { statuses, orderSides } = require('../../common/constants.js').binance;
+const { orderStatuses, orderSides } = require('../../common/constants.js').binance;
 
 /**
  * open buys
@@ -7,21 +7,21 @@ const { statuses, orderSides } = require('../../common/constants.js').binance;
 const openBuys = [
   new BinanceOrder({
     id: 6,
-    status: statuses.order.NEW,
+    status: orderStatuses.NEW,
     symbol: 'DASHBTC',
     timestamp: 48 * 2,
     side: orderSides.BUY,
   }),
   new BinanceOrder({
     id: 7,
-    status: statuses.order.PARTIALLY_FILLED,
+    status: orderStatuses.PARTIALLY_FILLED,
     symbol: 'DASHBTC',
     timestamp: 48 * 4,
     side: orderSides.BUY,
   }),
   new BinanceOrder({
     id: 8,
-    status: statuses.order.FILLED,
+    status: orderStatuses.FILLED,
     symbol: 'NCASHBTC',
     timestamp: 48 * 4,
     side: orderSides.BUY,
@@ -34,14 +34,14 @@ const openBuys = [
 const openSells = [
   new BinanceOrder({
     id: 9,
-    status: statuses.order.NEW,
+    status: orderStatuses.NEW,
     symbol: 'NCASHBTC',
     timestamp: 48 * 4,
     side: orderSides.SELL,
   }),
   new BinanceOrder({
     id: 10,
-    status: statuses.order.NEW,
+    status: orderStatuses.NEW,
     symbol: 'XVGBTC',
     timestamp: 48 * 4,
     side: orderSides.SELL,
@@ -55,28 +55,28 @@ const openSells = [
 const closedBuys = [
   new BinanceOrder({
     id: 2,
-    status: statuses.order.FILLED,
+    status: orderStatuses.FILLED,
     symbol: 'DASHBTC',
     timestamp: 23,
     side: orderSides.BUY,
   }),
   new BinanceOrder({
     id: 3,
-    status: statuses.order.FILLED,
+    status: orderStatuses.FILLED,
     symbol: 'DASHBTC',
     timestamp: 12,
     side: orderSides.BUY,
   }),
   new BinanceOrder({
     id: 4,
-    status: statuses.order.FILLED,
+    status: orderStatuses.FILLED,
     symbol: 'DASHBTC',
     timestamp: 48,
     side: orderSides.BUY,
   }),
   new BinanceOrder({
     id: 11,
-    status: statuses.order.FILLED,
+    status: orderStatuses.FILLED,
     symbol: 'NCASHBTC',
     timestamp: 4,
     side: orderSides.BUY,
@@ -84,7 +84,7 @@ const closedBuys = [
   // lastBuyIn for ncash
   new BinanceOrder({
     id: 12,
-    status: statuses.order.FILLED,
+    status: orderStatuses.FILLED,
     symbol: 'NCASHBTC',
     timestamp: 48 * 4,
     side: orderSides.BUY,
@@ -92,7 +92,7 @@ const closedBuys = [
   }),
   new BinanceOrder({
     id: 13,
-    status: statuses.order.CANCELED,
+    status: orderStatuses.CANCELED,
     symbol: 'NCASHBTC',
     timestamp: 48 * 4,
     side: orderSides.BUY,
@@ -100,7 +100,7 @@ const closedBuys = [
   new BinanceOrder({
     // lastBuyIn for XVG
     id: 14,
-    status: statuses.order.FILLED,
+    status: orderStatuses.FILLED,
     symbol: 'XVGBTC',
     timestamp: 48 * 4,
     side: orderSides.BUY,
@@ -114,14 +114,14 @@ const closedBuys = [
 const closedSells = [
   new BinanceOrder({
     id: 1,
-    status: statuses.order.FILLED,
+    status: orderStatuses.FILLED,
     symbol: 'DASHBTC',
     timestamp: 42,
     side: orderSides.SELL,
   }),
   new BinanceOrder({
     id: 5,
-    status: statuses.order.FILLED,
+    status: orderStatuses.FILLED,
     symbol: 'DASHBTC',
     timestamp: 77,
     side: orderSides.SELL,

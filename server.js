@@ -31,10 +31,10 @@ const server = http.createServer(async (req, res) => {
   if (url.includes('dashboard') && method === requestMethods.GET) {
     res.statusCode = 200;
     try {
-      // const binanceDashboard = await new BinanceDashboard().fetch().then((d) => d.serialize());
-      const binanceDashboard = {};
+      const binanceDashboard = await new BinanceDashboard().fetch().then((d) => d.serialize());
       const gdaxDashboard = await new GdaxDashboard().fetch().then((d) => d.serialize());
-      res.write([binanceDashboard, gdaxDashboard]);
+      const response = JSON.stringify([binanceDashboard, gdaxDashboard]);
+      res.write(response);
       res.end();
     } catch (err) {
       res.write(err.message);

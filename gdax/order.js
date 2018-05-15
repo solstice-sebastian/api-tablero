@@ -28,9 +28,16 @@ class GdaxOrder {
     this.createAt = data.created_at;
     this.price = data.price;
     this.size = data.size;
-    this.settled = data.settled;
     this.side = data.side;
     this.type = data.type;
+    this.timeInForce = data.time_in_force;
+    this.postOnly = data.post_only;
+    this.fillFees = data.fill_fees;
+    this.filledSize = data.filled_size;
+    this.executedValue = data.executed_value;
+    this.settled = data.settled;
+    this.status = data.status;
+
 
     // ticker
     this.symbol = this.productId.replace('-', '');

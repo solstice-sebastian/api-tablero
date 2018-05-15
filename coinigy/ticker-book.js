@@ -100,25 +100,19 @@ class CoinigyTickerBook {
     };
   }
 
-  async getFavorites() {
+  async fetch() {
     const endpoint = Constants.coinigy.endpoints.GET_FAVORITES;
     const favorites = await this.adapter.post(endpoint);
     this.onUpdate(favorites);
     return Promise.resolve(this);
   }
 
-  async fetch() {
-    const favorites = this.getFavorites();
-    this.onUpdate(favorites);
-    return Promise.resolve(this);
-  }
-
   poll({ timeout = TIME_BETWEEN_REQUESTS, callback = noop } = {}) {
     setInterval(() => {
-      this.getFavorites().then(callback);
+      this.fetch().then(callback);
     }, timeout);
 
-    this.getFavorites().then(callback);
+    this.fetch().then(callback);
   }
 
   serialize() {

@@ -8,8 +8,8 @@ class GdaxDashboardAsset extends DashboardAsset {
    * @param {Number} currentPrice
    * @param {Array<GdaxOrder>} openOrders
    */
-  constructor({ asset, lastBuyIn, currentPrice, openOrders }) {
-    super({ asset, lastBuyIn, currentPrice, openOrders });
+  constructor({ asset, lastBuyIn, currentPrice, openOrders, balance }) {
+    super({ asset, lastBuyIn, currentPrice, openOrders, balance });
   }
 }
 

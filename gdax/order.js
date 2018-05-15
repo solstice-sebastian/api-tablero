@@ -38,7 +38,6 @@ class GdaxOrder {
     this.settled = data.settled;
     this.status = data.status;
 
-
     // ticker
     this.symbol = this.productId.replace('-', '');
     this.timestamp = new Date(data.created_at).getTime();

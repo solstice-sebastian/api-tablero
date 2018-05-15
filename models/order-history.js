@@ -1,10 +1,10 @@
-class GdaxOrderBook {
+class GdaxOrderHistory {
   /**
    * @param {Array<Order>} orders
    */
   constructor(orders) {
     if (Array.isArray(orders) === false) {
-      throw new Error('OrderBook requires an Array<Order>');
+      throw new Error('OrderHistory requires an Array<Order>');
     }
     this.orders = orders;
   }
@@ -14,7 +14,7 @@ class GdaxOrderBook {
    */
   filterBySymbol(symbol) {
     if (Array.isArray(this.orders) === false) {
-      throw new Error(`OrderBook#filterBySymbol: orders not initialized`);
+      throw new Error(`OrderHistory#filterBySymbol: orders not initialized`);
     }
     return this.orders.filter((order) => order.symbol === symbol);
   }
@@ -24,14 +24,14 @@ class GdaxOrderBook {
    */
   findById(orderId) {
     if (Array.isArray(this.orders) === false) {
-      throw new Error(`OrderBook#findById: orders not initialized`);
+      throw new Error(`OrderHistory#findById: orders not initialized`);
     }
     return this.orders.find((order) => order.id === orderId);
   }
 
   getOpen(symbol) {
     if (Array.isArray(this.orders) === false) {
-      throw new Error(`OrderBook#getOpen: orders not initialized`);
+      throw new Error(`OrderHistory#getOpen: orders not initialized`);
     }
 
     if (symbol === undefined) {
@@ -46,7 +46,7 @@ class GdaxOrderBook {
    */
   getLastBuyIn(symbol) {
     if (Array.isArray(this.orders) === false) {
-      throw new Error(`OrderBook#getLastBuyIn: orders not initialized`);
+      throw new Error(`OrderHistory#getLastBuyIn: orders not initialized`);
     }
     const ordersForSymbol = this.filterBySymbol(symbol);
     const lastBuyIn = ordersForSymbol.reduce((prev, curr) => {
@@ -68,4 +68,4 @@ class GdaxOrderBook {
   }
 }
 
-module.exports = GdaxOrderBook;
+module.exports = GdaxOrderHistory;

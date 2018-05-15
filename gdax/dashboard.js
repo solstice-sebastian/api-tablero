@@ -2,12 +2,12 @@ const { uniq } = require('lodash');
 const GdaxAdapter = require('./adapter.js');
 const GdaxDashboardAsset = require('./dashboard-asset.js');
 const GdaxBalanceBook = require('./balance-book.js');
-const GdaxOrderBook = require('./order-book.js');
+const GdaxOrderHistory = require('./order-history.js');
 const TickerBook = require('../coinigy/ticker-book.js');
 const Constants = require('../common/constants.js');
 
 class GdaxDashboard {
-  constructor(base = 'BTC') {
+  constructor(base = 'USD') {
     this.base = base;
     this.adapter = new GdaxAdapter();
   }
@@ -21,27 +21,27 @@ class GdaxDashboard {
     const balanceBook = new GdaxBalanceBook(balances);
 
     const orders = await this.adapter.getOrders();
-    const orderBook = new GdaxOrderBook(orders);
+    const orderHistory = new GdaxOrderHistory(orders);
 
     const tickerBook = await new TickerBook().fetch();
-    this.dashboardAssets = this.build({ balanceBook, orderBook, tickerBook });
+    this.dashboardAssets = this.build({ balanceBook, orderHistory, tickerBook });
     return Promise.resolve(this);
   }
 
   /**
    * get lastBuyIn for each active balance
    */
-  build({ balanceBook, orderBook, tickerBook }) {
+  build({ balanceBook, orderHistory, tickerBook }) {
     const assetsWithBalance = balanceBook.getActiveAssets();
-    const assetsWithOpenOrders = orderBook.getOpen().map((order) => order.getAsset());
+    const assetsWithOpenOrders = orderHistory.getOpen().map((order) => order.getAsset());
     const activeAssets = uniq([...assetsWithBalance, ...assetsWithOpenOrders]);
 
     return activeAssets.map((asset) => {
-      const openOrders = orderBook.getOpen(asset);
+      const openOrders = orderHistory.getOpen(asset);
       const balance = balanceBook.getAsset(asset);
 
-      const symbol = `${this.base}${asset}`;
-      const lastBuyIn = orderBook.getLastBuyIn(symbol);
+      const symbol = `${asset}${this.base}`;
+      const lastBuyIn = orderHistory.getLastBuyIn(symbol);
       const ticker = tickerBook.getTicker(symbol);
       const currentPrice = ticker !== undefined ? ticker.price : Constants.NO_TICKER;
       return new GdaxDashboardAsset({

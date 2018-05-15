@@ -1,14 +1,14 @@
-const OrderBook = require('../models/order-book.js');
+const OrderHistory = require('../models/order-history.js');
 const BinanceOrder = require('./order.js');
 
-class BinanceOrderBook extends OrderBook {
+class BinanceOrderHistory extends OrderHistory {
   constructor(orders) {
     if (Array.isArray(orders) === false) {
-      throw new Error('BinanceOrderBook requires Array<BinanceOrder>');
+      throw new Error('BinanceOrderHistory requires Array<BinanceOrder>');
     }
     const binanceOrders = orders.map((order) => new BinanceOrder(order));
     super(binanceOrders);
   }
 }
 
-module.exports = BinanceOrderBook;
+module.exports = BinanceOrderHistory;

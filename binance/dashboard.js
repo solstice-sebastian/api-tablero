@@ -1,7 +1,7 @@
 const BinanceAccountInfo = require('./account-info.js');
 const BinanceTickerBook = require('./ticker-book.js');
 const BinanceAdapter = require('./adapter.js');
-const BinanceOrderBook = require('./order-book.js');
+const BinanceOrderHistory = require('./order-history.js');
 const { getDefaults } = require('./helpers.js')();
 const Constants = require('../common/constants.js');
 const { getPercentDiff } = require('../common/helpers.js')();
@@ -27,34 +27,30 @@ class BinanceDashboard {
     const { balanceBook } = await new BinanceAccountInfo(this.adapter).load();
     const tickerBook = await this.getTickerBook();
     balanceBook.activeAssets = balanceBook.getActiveAssets(tickerBook);
-    const orderBook = await this.getOrderBookForAssets({
+    const orderHistory = await this.getOrderHistoryForAssets({
       assets: [...balanceBook.activeAssets],
       limit: 10,
     });
-    this.dashboardAssets = this.build({ orderBook, balanceBook, tickerBook });
+    this.dashboardAssets = this.build({ orderHistory, balanceBook, tickerBook });
     return Promise.resolve(this);
   }
 
   /**
-   * @param {BinanceOrderBook} orderBook
+   * @param {BinanceOrderHistory} orderHistory
    * @param {BinanceBalanceBook} balanceBook
    * @param {BinanceTickerBook} tickerBook
    * @return {Promise<Array<BinanceDashboardAsset>>}
    */
-  build({ orderBook, balanceBook, tickerBook }) {
+  build({ orderHistory, balanceBook, tickerBook }) {
     const activeAssets = balanceBook.activeAssets.reduce((acc, asset) => {
       const symbol = `${asset}${this.base}`;
-      const lastBuyIn = orderBook.getLastBuyIn(symbol);
+      const lastBuyIn = orderHistory.getLastBuyIn(symbol);
       if (tickerBook.getSymbol(symbol) === undefined) {
         throw new Error(`BinanceDashboard missing ticker for symbol ${symbol}`);
       }
       const balance = balanceBook.getAsset(asset);
       const currentPrice = tickerBook.getSymbol(symbol).price;
-      const openOrders = orderBook.getOpen(symbol).map((order) =>
-        Object.assign({}, order, {
-          profitLoss: getPercentDiff(lastBuyIn.price, order.price),
-        })
-      );
+      const openOrders = orderHistory.getOpen(symbol);
       acc.push(
         new BinanceDashboardAsset({
           lastBuyIn,
@@ -83,14 +79,14 @@ class BinanceDashboard {
   /**
    * gets all open orders + latest `limit` orders for each activeAsset/base
    */
-  async getOrderBookForAssets({ assets, limit }) {
+  async getOrderHistoryForAssets({ assets, limit }) {
     return new Promise(async (res, rej) => {
       const assetOrders = [];
 
       const runner = async (asset) => {
         if (asset === undefined) {
-          const orderBook = new BinanceOrderBook([...assetOrders]);
-          res(orderBook);
+          const orderHistory = new BinanceOrderHistory([...assetOrders]);
+          res(orderHistory);
         } else {
           const { recvWindow, timestamp } = getDefaults();
           const symbol = `${asset}${this.base}`;

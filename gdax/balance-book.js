@@ -28,7 +28,7 @@ class GdaxBalanceBook extends BalanceBook {
    */
   getActiveAssets() {
     return this.getActive()
-      .filter((balance) => balance.asset !== 'BTC')
+      .filter((balance) => balance.asset !== 'USD')
       .map((balance) => balance.asset);
   }
 }

@@ -7,6 +7,7 @@ const CoinigyTickerBook = require('./coinigy/ticker-book.js');
 const MockTickerBook = require('./mocks/ticker-book.js');
 const Emailer = require('./modules/emailer.js');
 const commandLineArgs = require('command-line-args');
+const serializeDashboards = require('./modules/serialize-dashboards.js');
 
 const cmdDefs = [{ name: 'mock', alias: 'm', type: Boolean }];
 const cmdLineOptions = commandLineArgs(cmdDefs);
@@ -31,9 +32,10 @@ const server = http.createServer(async (req, res) => {
   if (url.includes('dashboard') && method === requestMethods.GET) {
     res.statusCode = 200;
     try {
-      const binanceDashboard = await new BinanceDashboard().fetch().then((d) => d.serialize());
-      const gdaxDashboard = await new GdaxDashboard().fetch().then((d) => d.serialize());
-      const response = JSON.stringify([binanceDashboard, gdaxDashboard]);
+      // const binanceDashboard = await new BinanceDashboard().fetch();
+      const binanceDashboard = {};
+      const gdaxDashboard = await new GdaxDashboard().fetch();
+      const response = serializeDashboards([binanceDashboard, gdaxDashboard]);
       res.write(response);
       res.end();
     } catch (err) {

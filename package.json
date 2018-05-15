@@ -34,11 +34,11 @@
     "emailjs": "^2.0.0",
     "gdax": "^0.7.0",
     "glob": "^7.1.2",
+    "lodash": "^4.17.10",
     "moment": "^2.21.0",
     "node-fetch": "^2.1.1",
     "nodemon": "^1.17.3",
     "qs": "^6.5.2",
-    "ws": "^5.1.0",
-    "@bit/solstice.sebastian.common.logger": "file:./components/common/logger"
+    "ws": "^5.1.0"
   }
 }

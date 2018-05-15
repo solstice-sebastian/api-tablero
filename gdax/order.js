@@ -65,6 +65,10 @@ class GdaxOrder {
   isOpen() {
     return this.isFilled() === false;
   }
+
+  getAsset() {
+    return this.productId.replace(/-.+/g, '');
+  }
 }
 
 module.exports = GdaxOrder;

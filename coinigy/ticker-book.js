@@ -107,6 +107,12 @@ class CoinigyTickerBook {
     return Promise.resolve(this);
   }
 
+  async fetch() {
+    const favorites = this.getFavorites();
+    this.onUpdate(favorites);
+    return Promise.resolve(this);
+  }
+
   poll({ timeout = TIME_BETWEEN_REQUESTS, callback = noop } = {}) {
     setInterval(() => {
       this.getFavorites().then(callback);

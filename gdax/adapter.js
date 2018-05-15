@@ -14,13 +14,18 @@ class GdaxAdapter {
     this.client = new Gdax.AuthenticatedClient(key, secret, passphrase, apiURI);
   }
 
-  request(fn, ...args) {
+  async request(fn, ...args) {
     try {
-      const response = fn(...args);
+      const response = await fn(...args);
       return response;
     } catch (err) {
       throw err;
     }
+  }
+
+  getBalances(...args) {
+    // return this.request(this.client.getAccounts, ...args);
+    return this.client.getAccounts();
   }
 
   getOrders(...args) {

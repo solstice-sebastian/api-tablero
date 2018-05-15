@@ -2,9 +2,9 @@ class BalanceBook {
   /**
    * @param {Array<Balance>=}
    */
-  constructor(balances, Ctor) {
+  constructor(balances) {
     if (balances !== undefined) {
-      this.init(balances, Ctor);
+      this.init(balances);
     }
   }
 

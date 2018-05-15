@@ -2,6 +2,7 @@ const DashboardAsset = require('../models/dashboard-asset.js');
 
 class GdaxDashboardAsset extends DashboardAsset {
   /**
+   * @param {String} asset
    * @param {GdaxBalance} balance
    * @param {GdaxOrder} lastBuyIn
    * @param {Number} currentPrice

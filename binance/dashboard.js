@@ -31,8 +31,8 @@ class BinanceDashboard {
       assets: [...balanceBook.activeAssets],
       limit: 10,
     });
-    const assets = this.build({ orderBook, balanceBook, tickerBook });
-    return Promise.resolve(assets);
+    this.dashboardAssets = this.build({ orderBook, balanceBook, tickerBook });
+    return Promise.resolve(this);
   }
 
   /**
@@ -69,7 +69,6 @@ class BinanceDashboard {
     if (activeAssets.length === 0) {
       return Constants.NO_DASHBOARD_ASSETS;
     }
-    this.dashboardAssets = [...activeAssets];
     return activeAssets;
   }
 

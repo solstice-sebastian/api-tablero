@@ -14,26 +14,16 @@ class GdaxAdapter {
     this.client = new Gdax.AuthenticatedClient(key, secret, passphrase, apiURI);
   }
 
-  async request(fn, ...args) {
-    try {
-      const response = await fn(...args);
-      return response;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  getBalances(...args) {
-    // return this.request(this.client.getAccounts, ...args);
+  getBalances() {
     return this.client.getAccounts();
   }
 
-  getOrders(...args) {
-    return this.request(this.client.getOrders, ...args);
+  getOrders() {
+    return this.client.getOrders();
   }
 
-  getFills(...args) {
-    return this.request(this.client.getFills, ...args);
+  getFills() {
+    return this.client.getFills();
   }
 }
 

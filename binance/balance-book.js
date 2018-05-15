@@ -1,42 +1,23 @@
 const Constants = require('../common/constants.js');
+const BalanceBook = require('../models/balance-book.js');
 const BinanceBalance = require('./balance.js');
 
-class BinanceBalanceBook {
+class BinanceBalanceBook extends BalanceBook {
   /**
    * @param {Array<BinanceBalance>=}
    */
   constructor(balances) {
-    if (balances !== undefined) {
-      this.init(balances);
+    if (Array.isArray(balances) === false) {
+      throw new Error('BinanceBalanceBook requires Array<BinanceBalance>');
     }
+    super(balances);
   }
 
+  /**
+   * @param {Array<BinanceBalance>} balances
+   */
   init(balances) {
-    this.balances = balances.map((data) => new BinanceBalance(data));
-  }
-
-  load(adapter) {
-    const endpoint = Constants.binance.endpoints.GET_ACCOUNT_INFO;
-    return adapter
-      .get(endpoint)
-      .then((data) => this.init(data.balances))
-      .catch((err) => console.log(err));
-  }
-
-  /**
-   * @param asset
-   * @return {BinanceBalance} matching asset
-   */
-  getAsset(asset) {
-    return this.balances.find((item) => item.asset === asset);
-  }
-
-  /**
-   * @param {String} asset
-   * @return {Number} combined free + locked
-   */
-  getQty(asset) {
-    return this.getAsset(asset).qty;
+    this.balances = balances.map((balance) => new BinanceBalance(balance));
   }
 
   /**
@@ -58,13 +39,6 @@ class BinanceBalanceBook {
 
   getActiveAssets(tickerBook) {
     return this.getActive(tickerBook).map((item) => item.asset);
-  }
-
-  log() {
-    console.log('asset | qty | free | locked');
-    this.balances.forEach((item) => {
-      console.log(`${item.asset} -> ${item.qty} | ${item.free} | ${item.locked}`);
-    });
   }
 }
 

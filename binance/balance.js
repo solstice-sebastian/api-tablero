@@ -1,9 +1,12 @@
-class BinanceBalance {
+const Balance = require('../models/balance.js');
+
+class BinanceBalance extends Balance {
   constructor(data) {
-    this.asset = data.asset;
-    this.free = +data.free;
-    this.locked = +data.locked;
-    this.qty = this.free + this.locked;
+    const { asset } = data.asset;
+    const free = +data.free;
+    const locked = +data.locked;
+    const qty = free + locked;
+    super({ asset, free, locked, qty });
   }
 }
 

@@ -86,13 +86,11 @@ class BinanceDashboard {
    */
   async getOrderBookForAssets({ assets, limit }) {
     return new Promise(async (res, rej) => {
-      // get openBuyOrders since there could be an open order that is not for an 'active' asset
-      const openBuyOrders = await this.getOpenBuyOrders();
       const assetOrders = [];
 
       const runner = async (asset) => {
         if (asset === undefined) {
-          const orderBook = new BinanceOrderBook([...openBuyOrders, ...assetOrders]);
+          const orderBook = new BinanceOrderBook([...assetOrders]);
           res(orderBook);
         } else {
           const { recvWindow, timestamp } = getDefaults();

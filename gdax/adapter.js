@@ -1,5 +1,8 @@
 require('dotenv').config();
 const Gdax = require('gdax');
+const Constants = require('../common/constants.js');
+
+const { orderStatuses } = Constants.gdax;
 
 const key = process.env.GDAX_API_KEY;
 const secret = process.env.GDAX_API_SECRET;
@@ -18,8 +21,8 @@ class GdaxAdapter {
     return this.client.getAccounts();
   }
 
-  getOrders() {
-    return this.client.getOrders();
+  getOpenOrders() {
+    return this.client.getOrders({ status: orderStatuses.OPEN });
   }
 
   getFills() {

@@ -4,7 +4,6 @@ const BinanceAdapter = require('./adapter.js');
 const BinanceOrderHistory = require('./order-history.js');
 const { getDefaults } = require('./helpers.js')();
 const Constants = require('../common/constants.js');
-const { getPercentDiff } = require('../common/helpers.js')();
 const BinanceDashboardAsset = require('./dashboard-asset.js');
 
 const { endpoints, orderSides } = Constants.binance;
@@ -13,7 +12,6 @@ const { endpoints, orderSides } = Constants.binance;
  * - active coins
  * - buy in price
  * - current price
- * - current PL (from buy in)
  * - open order (if available) w/ PL
  */
 class BinanceDashboard {

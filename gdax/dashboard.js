@@ -20,7 +20,9 @@ class GdaxDashboard {
     const balances = await this.adapter.getBalances();
     const balanceBook = new GdaxBalanceBook(balances);
 
-    const orders = await this.adapter.getOrders();
+    const openOrders = await this.adapter.getOpenOrders();
+    const fills = await this.adapter.getFills();
+    const orders = [...openOrders, ...fills];
     const orderHistory = new GdaxOrderHistory(orders);
 
     const tickerBook = await new TickerBook().fetch();

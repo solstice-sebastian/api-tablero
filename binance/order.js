@@ -17,7 +17,9 @@
  * }
  */
 
-const orderStatuses = require('../common/constants.js').binance.statuses.order;
+const Constants = require('../common/constants.js');
+
+const { orderStatuses, orderSides } = Constants.binance;
 
 class BinanceOrder {
   constructor(data) {
@@ -33,6 +35,14 @@ class BinanceOrder {
 
   isOpen() {
     return this.status === orderStatuses.NEW || this.status === orderStatuses.PARTIALLY_FILLED;
+  }
+
+  isBuy() {
+    return this.side === orderSides.BUY;
+  }
+
+  isSell() {
+    return this.side === orderSides.SELL;
   }
 
   isFilled() {

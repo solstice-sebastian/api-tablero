@@ -13,6 +13,23 @@ class GdaxAdapter {
   constructor() {
     this.client = new Gdax.AuthenticatedClient(key, secret, passphrase, apiURI);
   }
+
+  request(fn, ...args) {
+    try {
+      const response = fn(...args);
+      return response;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  getOrders(...args) {
+    return this.request(this.client.getOrders, ...args);
+  }
+
+  getFills(...args) {
+    return this.request(this.client.getFills, ...args);
+  }
 }
 
 module.exports = GdaxAdapter;

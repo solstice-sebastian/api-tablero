@@ -5,24 +5,9 @@ const BinanceOrderBook = require('./order-book.js');
 const { getDefaults } = require('./helpers.js')();
 const Constants = require('../common/constants.js');
 const { getPercentDiff } = require('../common/helpers.js')();
+const BinanceDashboardAsset = require('./dashboard-asset.js');
 
 const { endpoints, orderSides } = Constants.binance;
-
-class BinanceDashboardAsset {
-  /**
-   * @param {BinanceBalance} balance
-   * @param {BinanceOrder} lastBuyIn
-   * @param {Number} currentPrice
-   * @param {Array<BinanceOrder>} openOrders
-   */
-  constructor({ balance, lastBuyIn, currentPrice, openOrders }) {
-    this.asset = balance.asset;
-    this.lastBuyIn = lastBuyIn;
-    this.currentPrice = currentPrice;
-    this.openOrders = openOrders;
-    this.balance = balance;
-  }
-}
 
 /**
  * - active coins

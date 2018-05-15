@@ -41,7 +41,22 @@ module.exports = {
       HOSTNAME: 'ws-feed-public.sandbox.gdax.com',
       CHANNEL_PREFIX: 'wss',
     },
-
+    orderSides: {
+      BUY: 'buy',
+      SELL: 'sell',
+    },
+    liquidity: {
+      MAKER: 'M',
+      TAKER: 'T',
+    },
+    statuses: {
+      order: {
+        PENDING: 'pending',
+        OPEN: 'open',
+        ACTIVE: 'active',
+        DONE: 'done',
+      },
+    },
     // production
     // API_HOST: 'https://api.gdax.com',
   },

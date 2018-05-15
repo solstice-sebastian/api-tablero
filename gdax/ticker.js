@@ -1,9 +1,11 @@
+const Constants = require('../common/constants.js');
+
 /**
  * @implements Ticker
  *
  * @param {Number} price in asset price
  * @param {String} symbol in 'ASSETBASE'
- * @param {Number} timestamp in milliseconds
+ * @param {Number} timestamp in milliseconds PST
  * @param {Number} volume of asset
  * @param {Number} baseVolume of base
  */
@@ -23,7 +25,7 @@ class GdaxTicker {
   constructor(data) {
     this.price = data.price;
     this.symbol = `${data.quote_currency}${data.base_currency}`;
-    this.timestamp = new Date(data.time).getTime();
+    this.timestamp = new Date(data.time).getTime() - Constants.MS_PER_HOUR * 8;
     this.volume = data.volume;
     this.baseVolume = data.baseVolume;
   }

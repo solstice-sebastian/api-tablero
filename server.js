@@ -5,24 +5,16 @@ const BinanceDashboard = require('./binance/dashboard.js');
 const GdaxDashboard = require('./gdax/dashboard.js');
 const CoinigyTickerBook = require('./coinigy/ticker-book.js');
 const MockTickerBook = require('./mocks/ticker-book.js');
-const Emailer = require('./modules/emailer.js');
 const commandLineArgs = require('command-line-args');
-const serializeDashboards = require('./modules/serialize-dashboards.js');
+const serializeDashboards = require('./serializers/dashboard.js');
 
 const cmdDefs = [{ name: 'mock', alias: 'm', type: Boolean }];
 const cmdLineOptions = commandLineArgs(cmdDefs);
 
 const { requestMethods } = Constants;
 const PORT = process.env.PORT || 5000;
-const username = process.env.EMAIL_USERNAME;
-const password = process.env.EMAIL_PASSWORD;
-const host = process.env.EMAIL_HOST;
-const recipient = process.env.EMAIL_RECIPIENT;
 
 const tickerBook = cmdLineOptions.mock ? new MockTickerBook() : new CoinigyTickerBook();
-
-const emailer = Emailer({ username, password, host });
-emailer.setRecipient(recipient);
 
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');

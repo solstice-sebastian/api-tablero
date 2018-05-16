@@ -1,6 +1,6 @@
 const Constants = require('../common/constants.js');
 
-const { liquidity, orderSides } = Constants.gdax;
+const { liquidity, orderSides, orderStatuses } = Constants.gdax;
 /**
  * {
  *     "id": "d0c5340b-6d6c-49d9-b567-48c4bfca13d2",
@@ -25,8 +25,7 @@ class GdaxOrder {
     this.id = data.id;
     this.orderId = data.order_id;
     this.productId = data.product_id;
-    this.createAt = data.created_at;
-    this.price = data.price;
+    this.createdAt = data.created_at;
     this.size = data.size;
     this.side = data.side;
     this.type = data.type;
@@ -41,15 +40,21 @@ class GdaxOrder {
     // ticker
     this.symbol = this.productId.replace('-', '');
     this.timestamp = new Date(data.created_at).getTime();
+    this.price = data.price;
 
     // fills specific;
     this.fee = data.fee;
     this.tradeId = data.trade_id;
     this.liquidity = data.liquidity; // maker or taker
+
+    // fills dont have price prop
+    if (this.settled === true) {
+      this.price = this.executedValue / this.filledSize;
+    }
   }
 
   isFilled() {
-    return this.tradeId !== undefined;
+    return this.status === orderStatuses.DONE || this.status === orderStatuses.SETTLED;
   }
 
   isMaker() {
@@ -69,7 +74,7 @@ class GdaxOrder {
   }
 
   isOpen() {
-    return this.isFilled() === false;
+    return this.status === orderStatuses.ACTIVE;
   }
 
   getAsset() {

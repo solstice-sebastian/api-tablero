@@ -20,9 +20,7 @@ class GdaxDashboard {
     const balances = await this.adapter.getBalances();
     const balanceBook = new GdaxBalanceBook(balances);
 
-    const openOrders = await this.adapter.getOpenOrders();
-    const fills = await this.adapter.getFills();
-    const orders = [...openOrders, ...fills];
+    const orders = await this.adapter.getOrders();
     const orderHistory = new GdaxOrderHistory(orders);
 
     const tickerBook = await new TickerBook().fetch();
@@ -39,10 +37,10 @@ class GdaxDashboard {
     const activeAssets = uniq([...assetsWithBalance, ...assetsWithOpenOrders]);
 
     return activeAssets.map((asset) => {
-      const openOrders = orderHistory.getOpen(asset);
       const balance = balanceBook.getAsset(asset);
 
       const symbol = `${asset}${this.base}`;
+      const openOrders = orderHistory.getOpen(symbol);
       const lastBuyIn = orderHistory.getLastBuyIn(symbol);
       const ticker = tickerBook.getTicker(symbol);
       const currentPrice = ticker !== undefined ? ticker.price : Constants.NO_TICKER;

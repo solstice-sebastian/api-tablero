@@ -21,12 +21,8 @@ class GdaxAdapter {
     return this.client.getAccounts();
   }
 
-  getOpenOrders() {
-    return this.client.getOrders({ status: orderStatuses.OPEN });
-  }
-
-  getFills() {
-    return this.client.getFills();
+  getOrders() {
+    return this.client.getOrders({ status: orderStatuses.ALL });
   }
 }
 

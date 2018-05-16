@@ -54,6 +54,8 @@ module.exports = {
       OPEN: 'open',
       ACTIVE: 'active',
       DONE: 'done',
+      SETTLED: 'settled',
+      ALL: 'all',
     },
     // production
     // API_HOST: 'https://api.gdax.com',

@@ -32,9 +32,9 @@ const server = http.createServer(async (req, res) => {
   if (url.includes('dashboard') && method === requestMethods.GET) {
     res.statusCode = 200;
     try {
-      const binanceDashboard = await new BinanceDashboard().fetch();
-      // const binanceDashboard = {};
       const gdaxDashboard = await new GdaxDashboard().fetch();
+      // const response = serializeDashboards([gdaxDashboard]);
+      const binanceDashboard = await new BinanceDashboard().fetch();
       const response = serializeDashboards([binanceDashboard, gdaxDashboard]);
       res.write(response);
       res.end();

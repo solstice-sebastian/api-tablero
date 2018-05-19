@@ -48,4 +48,4 @@ tickerBook.poll();
 server.listen(PORT);
 
 // testing
-http.get(`http://localhost:${PORT}/dashboards`);
+// http.get(`http://localhost:${PORT}/dashboards`);

@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "playground",
   "main": "index.js",
+  "engines": {
+    "node": ">=8"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",

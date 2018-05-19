@@ -44,6 +44,5 @@ test(`build with open orders`, (assert) => {
   assert.equal(dashboardAsset.lastBuyIn.constructor, BinanceOrder);
   assert.equal(dashboardAsset.currentPrice, 0.0065);
   assert.equal(dashboardAsset.openOrders.length, 1);
-  assert.equal(dashboardAsset.openOrders[0].profitLoss, 0.2);
   assert.end();
 });

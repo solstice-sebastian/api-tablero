@@ -42,8 +42,13 @@ const server = http.createServer(async (req, res) => {
     res.write(tickerBook.serialize());
     res.end();
   } else if (method === requestMethods.OPTIONS) {
-    res.statusCode = 200;
-    res.write();
+    const headers = {
+      'Access-Control-Allow-Origin': ALLOW_ORIGIN,
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Credentials': false,
+      'Access-Control-Allow-Headers': 'Content-Type, Accept',
+    };
+    res.writeHead(200, headers);
     res.end();
   } else {
     res.statusCode = 404;

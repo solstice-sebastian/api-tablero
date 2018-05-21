@@ -26,6 +26,8 @@ module.exports = {
     POST: 'POST',
     DELETE: 'DELETE',
     PUT: 'PUT',
+    PATCH: 'PATCH',
+    OPTIONS: 'OPTIONS',
   },
 
   exchanges: {

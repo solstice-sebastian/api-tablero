@@ -13,11 +13,14 @@ const cmdLineOptions = commandLineArgs(cmdDefs);
 
 const { requestMethods } = Constants;
 const PORT = process.env.PORT || 5000;
+const { ALLOW_ORIGIN } = process.env;
 
 const tickerBook = cmdLineOptions.mock ? new MockTickerBook() : new CoinigyTickerBook();
 
 const server = http.createServer(async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.setHeader('Access-Control-Allow-Origin', ALLOW_ORIGIN);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Content-Type', 'application/json');
   const { method, url } = req;
 
@@ -37,6 +40,10 @@ const server = http.createServer(async (req, res) => {
   } else if (url.includes('tickers') && method === requestMethods.GET) {
     res.statusCode = 200;
     res.write(tickerBook.serialize());
+    res.end();
+  } else if (method === requestMethods.OPTIONS) {
+    res.statusCode = 200;
+    res.write();
     res.end();
   } else {
     res.statusCode = 404;

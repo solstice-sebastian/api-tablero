@@ -46,7 +46,8 @@ const server = http.createServer(async (req, res) => {
       'Access-Control-Allow-Origin': ALLOW_ORIGIN,
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Credentials': false,
-      'Access-Control-Allow-Headers': 'Content-Type, Accept',
+      'Access-Control-Allow-Headers':
+        'Content-Type, Accept, Access-Control-Allow-Origin, Access-Control-Allow-Methods, Access-Control-Allow-Credentials',
     };
     res.writeHead(200, headers);
     res.end();

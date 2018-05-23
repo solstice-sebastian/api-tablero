@@ -51,8 +51,28 @@ class CoinigyAdapter {
     }
   }
 
-  async addAlert(params) {
+  /**
+   * add an alert on coinigy
+   * const body = {
+   *   exch_code: code,
+   *   market_name: symbol,
+   *   alert_price: price,
+   *   alert_note: note,
+   * };
+   */
+  async addAlert({ symbol, price }) {
+    let exchangeCode = coinigy.exchangeCodes.BINANCE;
+    if (symbol.toLowerCase().includes('usd')) {
+      exchangeCode = coinigy.exchangeCodes.GDAX;
+    }
+    const note = `## ${symbol} ## has reached a price of '${price}'`;
     const endpoint = coinigy.endpoints.ADD_ALERT;
+    const params = {
+      exch_code: exchangeCode,
+      market_name: symbol,
+      alert_price: String(price),
+      alert_note: note,
+    };
     return this.post(endpoint, params);
   }
 }

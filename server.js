@@ -43,11 +43,15 @@ app.get('/dashboards', async (req, res) => {
   }
 });
 
-app.post('/notification', async (req, res) => {
+app.post('/notifications', async (req, res) => {
   const adapter = new CoinigyAdapter();
   try {
-    const response = await adapter.addAlert(req.body);
-    res.send(response);
+    const { symbol, price } = req.body.notification;
+    const ticker = tickerBook.getTicker(symbol);
+    const coinigySymbol = ticker.mktName;
+    const result = await adapter.addAlert({ price, symbol: coinigySymbol });
+    // fake return of data
+    res.send({ notifications: { id: Math.floor(Math.random() * 100000) } });
   } catch (err) {
     res.send(err.message);
   }
@@ -59,14 +63,14 @@ tickerBook.poll();
 app.listen(PORT);
 
 // testing
-const symbol = 'NCASHBTC';
-const price = 0.00000405;
-const body = { symbol, price };
-const url = `http://localhost:${PORT}/notification`;
-const options = {
-  method: 'POST',
-  url,
-  json: true,
-  body,
-};
-request.post(options);
+// const symbol = 'NCASHBTC';
+// const price = 0.00000405;
+// const body = { symbol, price };
+// const url = `http://localhost:${PORT}/notifications`;
+// const options = {
+//   method: 'POST',
+//   url,
+//   json: true,
+//   body,
+// };
+// request.post(options);

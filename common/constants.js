@@ -167,6 +167,10 @@ module.exports = {
       GET_FAVORITES: '/api/v1/userWatchList',
       ADD_ALERT: '/api/v1/addAlert',
     },
+    exchangeCodes: {
+      BINANCE: 'BINA',
+      GDAX: 'GDAX',
+    },
   },
 
   TRADE_FEE: 0.001,

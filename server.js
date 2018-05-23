@@ -1,5 +1,5 @@
 require('dotenv').config();
-const request = require('request');
+// const request = require('request');
 const express = require('express');
 const bodyParser = require('body-parser');
 // const Constants = require('./common/constants.js');
@@ -50,6 +50,7 @@ app.post('/notifications', async (req, res) => {
     const ticker = tickerBook.getTicker(symbol);
     const coinigySymbol = ticker.mktName;
     const result = await adapter.addAlert({ price, symbol: coinigySymbol });
+    console.log(`result:`, result);
     // fake return of data
     res.send({ notifications: { id: Math.floor(Math.random() * 100000) } });
   } catch (err) {

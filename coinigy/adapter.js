@@ -70,7 +70,7 @@ class CoinigyAdapter {
     const params = {
       exch_code: exchangeCode,
       market_name: symbol,
-      alert_price: String(price),
+      alert_price: +price,
       alert_note: note,
     };
     return this.post(endpoint, params);

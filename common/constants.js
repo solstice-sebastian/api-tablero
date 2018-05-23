@@ -165,6 +165,7 @@ module.exports = {
     API_HOST: 'https://api.coinigy.com',
     endpoints: {
       GET_FAVORITES: '/api/v1/userWatchList',
+      ADD_ALERT: '/api/v1/addAlert',
     },
   },
 

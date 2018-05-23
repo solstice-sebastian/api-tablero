@@ -50,6 +50,11 @@ class CoinigyAdapter {
       throw err;
     }
   }
+
+  async addAlert(params) {
+    const endpoint = coinigy.endpoints.ADD_ALERT;
+    return this.post(endpoint, params);
+  }
 }
 
 module.exports = CoinigyAdapter;

@@ -1,5 +1,6 @@
 require('dotenv').config();
-// const request = require('request');
+const fetch = require('node-fetch');
+const request = require('request');
 const express = require('express');
 const bodyParser = require('body-parser');
 // const Constants = require('@solstice.sebastian/constants');
@@ -75,3 +76,6 @@ app.listen(PORT);
 //   body,
 // };
 // request.post(options);
+
+// force dashboard
+request.get({ url: `http://localhost:${PORT}/dashboards` });

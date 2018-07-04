@@ -2,7 +2,7 @@ const BinanceAccountInfo = require('./account-info.js');
 const BinanceTickerBook = require('./ticker-book.js');
 const BinanceAdapter = require('./adapter.js');
 const BinanceOrderHistory = require('./order-history.js');
-const { getDefaults } = require('@solstice.sebastian/helpers')();
+const { getDefaults } = require('./helpers')();
 const Constants = require('@solstice.sebastian/constants');
 const BinanceDashboardAsset = require('./dashboard-asset.js');
 

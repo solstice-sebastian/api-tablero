@@ -1,7 +1,7 @@
 const Ticker = require('./ticker.js');
 const Adapter = require('./adapter.js');
-const Constants = require('../common/constants.js');
-const { noop } = require('../common/helpers.js')();
+const Constants = require('@solstice.sebastian/constants');
+const { noop } = require('@solstice.sebastian/helpers')();
 
 const TIME_BETWEEN_REQUESTS = 1000 * 15;
 

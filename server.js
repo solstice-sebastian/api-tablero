@@ -2,7 +2,7 @@ require('dotenv').config();
 // const request = require('request');
 const express = require('express');
 const bodyParser = require('body-parser');
-// const Constants = require('./common/constants.js');
+// const Constants = require('@solstice.sebastian/constants');
 const BinanceDashboard = require('./binance/dashboard.js');
 const GdaxDashboard = require('./gdax/dashboard.js');
 const CoinigyTickerBook = require('./coinigy/ticker-book.js');

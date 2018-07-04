@@ -4,7 +4,7 @@ const GdaxDashboardAsset = require('./dashboard-asset.js');
 const GdaxBalanceBook = require('./balance-book.js');
 const GdaxOrderHistory = require('./order-history.js');
 const TickerBook = require('../coinigy/ticker-book.js');
-const Constants = require('../common/constants.js');
+const Constants = require('@solstice.sebastian/constants');
 
 class GdaxDashboard {
   constructor(base = 'USD') {

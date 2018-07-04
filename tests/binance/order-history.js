@@ -1,5 +1,5 @@
 const test = require('tape');
-const Constants = require('../../common/constants.js');
+const Constants = require('@solstice.sebastian/constants');
 const BinanceOrderHistory = require('../../binance/order-history.js');
 const BinanceOrder = require('../../binance/order.js');
 const Mocks = require('../../mocks/mocks.js');

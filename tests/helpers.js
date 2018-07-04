@@ -1,5 +1,5 @@
-const Helpers = require('../common/helpers.js');
-const Constants = require('../common/constants.js');
+const Helpers = require('@solstice.sebastian/helpers');
+const Constants = require('@solstice.sebastian/constants');
 const test = require('tape');
 
 test(`modByPercent`, (assert) => {

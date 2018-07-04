@@ -1,7 +1,7 @@
 const test = require('tape');
 const BinanceTrader = require('../../binance/trader.js');
 const { getDefaults } = require('../../binance/helpers.js')();
-const Constants = require('../../common/constants.js');
+const Constants = require('@solstice.sebastian/constants');
 
 const { orderTypes, orderSides, endpoints } = Constants.binance;
 

@@ -1,4 +1,4 @@
-const Constants = require('../common/constants.js');
+const Constants = require('@solstice.sebastian/constants');
 const BalanceBook = require('../models/balance-book.js');
 const BinanceBalance = require('./balance.js');
 

@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const Constants = require('../common/constants.js');
+const Constants = require('@solstice.sebastian/constants');
 const BinanceSymbolInfo = require('./symbol-info.js');
 
 /**

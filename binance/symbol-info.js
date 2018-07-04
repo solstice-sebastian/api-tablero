@@ -25,8 +25,8 @@
  * }
  */
 
-const Constants = require('../common/constants.js');
-const { castSatoshi } = require('../common/helpers.js')();
+const Constants = require('@solstice.sebastian/constants');
+const { castSatoshi } = require('@solstice.sebastian/helpers')();
 
 const { filterTypes } = Constants.binance;
 

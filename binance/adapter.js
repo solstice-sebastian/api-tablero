@@ -1,8 +1,8 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
 const CryptoJS = require('crypto-js');
-const { toQueryString, validateRequired } = require('../common/helpers.js')();
-const Constants = require('../common/constants.js');
+const { toQueryString, validateRequired } = require('@solstice.sebastian/helpers')();
+const Constants = require('@solstice.sebastian/constants');
 
 const { requestMethods, binance } = Constants;
 const { orderSides, orderTypes } = binance;

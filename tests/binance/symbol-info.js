@@ -1,6 +1,6 @@
 const test = require('tape');
 const BinanceSymbolInfo = require('../../binance/symbol-info.js');
-const Constants = require('../../common/constants.js');
+const Constants = require('@solstice.sebastian/constants');
 
 const { filterTypes } = Constants.binance;
 

@@ -1,5 +1,5 @@
 const BinanceOrder = require('../../binance/order.js');
-const { orderStatuses, orderSides } = require('../../common/constants.js').binance;
+const { orderStatuses, orderSides } = require('@solstice.sebastian/constants').binance;
 
 /**
  * open buys

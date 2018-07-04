@@ -1,6 +1,6 @@
 require('dotenv').config();
 const Gdax = require('gdax');
-const Constants = require('../common/constants.js');
+const Constants = require('@solstice.sebastian/constants');
 
 const { orderStatuses } = Constants.gdax;
 

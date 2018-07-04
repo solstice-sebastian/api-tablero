@@ -1,7 +1,7 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
 const qs = require('qs');
-const Constants = require('../common/constants.js');
+const Constants = require('@solstice.sebastian/constants');
 
 const { coinigy } = Constants;
 const apiKey = process.env.COINIGY_API_KEY;

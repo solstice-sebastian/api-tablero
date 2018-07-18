@@ -34,10 +34,11 @@ app.use(bodyParser.json());
 
 app.get('/dashboards', async (req, res) => {
   try {
-    const gdaxDashboard = await new GdaxDashboard().fetch();
+    // const gdaxDashboard = await new GdaxDashboard().fetch();
     // const response = serializeDashboards([gdaxDashboard]);
     const binanceDashboard = await new BinanceDashboard().fetch();
-    const response = serializeDashboards([binanceDashboard, gdaxDashboard]);
+    const response = serializeDashboards([binanceDashboard]);
+    // const response = serializeDashboards([binanceDashboard, gdaxDashboard]);
     res.send(response);
   } catch (err) {
     res.send(err.message);

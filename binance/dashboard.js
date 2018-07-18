@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax, no-await-in-loop */
+const { mean } = require('lodash');
 const BinanceAccountInfo = require('./account-info.js');
 const BinanceTickerBook = require('./ticker-book.js');
 const BinanceAdapter = require('./adapter.js');
@@ -29,7 +31,9 @@ class BinanceDashboard {
       assets: [...balanceBook.activeAssets],
       limit: 10,
     });
-    this.dashboardAssets = this.build({ orderHistory, balanceBook, tickerBook });
+    this.dashboardAssets = await this.resolveMarketBuyIns({
+      dashboardAssets: this.build({ orderHistory, balanceBook, tickerBook }),
+    });
     return Promise.resolve(this);
   }
 
@@ -116,6 +120,34 @@ class BinanceDashboard {
     const endpoint = endpoints.GET_OPEN_ORDERS;
     const openOrders = await this.adapter.get(endpoint, params);
     return openOrders.filter((order) => order.side === orderSides.BUY);
+  }
+
+  async resolveMarketBuyIns({ dashboardAssets }) {
+    for (const asset of dashboardAssets) {
+      if (asset.lastBuyIn.type === Constants.binance.orderTypes.MARKET) {
+        const trades = await this.getTrades({ order: asset.lastBuyIn });
+        const averagePrice = mean(trades.map((t) => +t.price));
+        asset.lastBuyIn.price = averagePrice.toFixed(8);
+      }
+    }
+    return dashboardAssets;
+  }
+
+  /**
+   * get all the trades that have same order Id as orderId
+   * we can assume these are already all MARKET + BUY since it is a `lastBuyIn`
+   */
+  async getTrades({ order }) {
+    const params = {
+      limit: 100,
+      symbol: order.symbol,
+      timestamp: Date.now(),
+    };
+    const trades = await this.adapter.get(
+      Constants.binance.endpoints.GET_ACCOUNT_TRADES_FOR_SYMBOL,
+      params
+    );
+    return trades.filter((trade) => trade.orderId === order.orderId);
   }
 
   /**

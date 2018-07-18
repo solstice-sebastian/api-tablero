@@ -30,7 +30,7 @@
   "author": "Solstice Sebastian",
   "license": "MIT",
   "dependencies": {
-    "@solstice.sebastian/constants": "^1.0.2",
+    "@solstice.sebastian/constants": "^1.1.1",
     "@solstice.sebastian/helpers": "^1.1.0",
     "body-parser": "^1.18.3",
     "change-case": "^3.0.2",

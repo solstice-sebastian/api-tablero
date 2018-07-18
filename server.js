@@ -1,5 +1,4 @@
 require('dotenv').config();
-const fetch = require('node-fetch');
 const request = require('request');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -33,12 +32,13 @@ app.use(allowCrossDomain);
 app.use(bodyParser.json());
 
 app.get('/dashboards', async (req, res) => {
+  const dashboards = [];
   try {
-    // const gdaxDashboard = await new GdaxDashboard().fetch();
-    // const response = serializeDashboards([gdaxDashboard]);
+    const gdaxDashboard = await new GdaxDashboard().fetch();
+    dashboards.push(gdaxDashboard);
     const binanceDashboard = await new BinanceDashboard().fetch();
-    const response = serializeDashboards([binanceDashboard]);
-    // const response = serializeDashboards([binanceDashboard, gdaxDashboard]);
+    dashboards.push(binanceDashboard);
+    const response = serializeDashboards(dashboards);
     res.send(response);
   } catch (err) {
     res.send(err.message);

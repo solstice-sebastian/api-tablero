@@ -41,7 +41,7 @@ class TradeRecordManager {
     const dbTimestamp = Date.now();
     const dbDatetime = msToDatetime(dbTimestamp);
     const collection = await this.getCollection();
-    const existing = collection.find({ symbol }).toArray();
+    const existing = await collection.find({ symbol }).toArray();
     if (existing.length > 0) {
       throw new Error(`Attempting to add record ${symbol} but it already exists`);
     }
@@ -58,24 +58,34 @@ class TradeRecordManager {
 
   async update({ ticker, strategy }) {
     const { symbol } = ticker;
-    const { limitPrice } = strategy;
     const collection = await this.getCollection();
     const result = await collection.updateOne(
       { symbol },
       {
         $set: {
-          limitPrice,
+          strategy,
         },
       }
     );
-    return result.ops[0];
+    return result.connection;
   }
 
   async remove({ ticker }) {
     const { symbol } = ticker;
     const collection = await this.getCollection();
-    const result = collection.deleteOne({ symbol });
-    return result.ops[0];
+    const result = await collection.deleteOne({ symbol });
+    return result;
+  }
+
+  async clear() {
+    const collection = await this.getCollection();
+    return collection.drop();
+  }
+
+  async find(query) {
+    const collection = await this.getCollection();
+    const result = await collection.find(query).toArray();
+    return result;
   }
 }
 

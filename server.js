@@ -66,12 +66,16 @@ app.get('/tickers', () => tickerBook.serialize());
 
 app.post('/trade-order', async (req, res) => {
   const { ticker, strategy, trader } = req.body;
-  const result = await tradeRecordManager.add({ ticker, strategy, trader });
-  res.send(result);
+  const result = await tradeRecordManager.process({ ticker, strategy, trader });
+  if (result instanceof Error) {
+    return res.status(400).send(result);
+  }
+  return res.send(result);
 });
 
 tickerBook.poll();
-app.listen(PORT);
+// app.listen(PORT);
+app.listen(3042);
 
 // testing
 // const symbol = 'NCASHBTC';
@@ -87,4 +91,4 @@ app.listen(PORT);
 // request.post(options);
 
 // force dashboard
-request.get({ url: `http://localhost:${PORT}/dashboards` });
+// request.get({ url: `http://localhost:${PORT}/dashboards` });

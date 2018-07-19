@@ -4,7 +4,7 @@ const { msToDatetime } = require('@solstice.sebastian/helpers')();
 const { DB_NAME, COLLECTION_NAME } = process.env;
 
 class TradeRecordManager {
-  constructor({ dbName = DB_NAME, collectionName = COLLECTION_NAME }) {
+  constructor({ dbName = DB_NAME, collectionName = COLLECTION_NAME } = {}) {
     this.dbName = dbName;
     this.collectionName = collectionName;
   }
@@ -28,7 +28,7 @@ class TradeRecordManager {
    * @param {Strategy} strategy
    * @param {Trader} trader
    */
-  receive({ ticker, strategy, trader }) {
+  process({ ticker, strategy, trader }) {
     const { exitOrder } = trader;
     if (exitOrder === null) {
       return this.add({ ticker, strategy, trader });
@@ -43,7 +43,7 @@ class TradeRecordManager {
     const collection = await this.getCollection();
     const existing = await collection.find({ symbol }).toArray();
     if (existing.length > 0) {
-      throw new Error(`Attempting to add record ${symbol} but it already exists`);
+      return new Error(`Attempting to add record ${symbol} but it already exists`);
     }
     const result = await collection.insertOne({
       symbol,

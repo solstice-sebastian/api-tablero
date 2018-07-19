@@ -1,12 +1,17 @@
 const { getClient } = require('@solstice.sebastian/db-client');
 const { msToDatetime } = require('@solstice.sebastian/helpers')();
 
-const { DB_NAME, COLLECTION_NAME } = process.env;
+const { DB_NAME, COLLECTION_NAME, RECORD_COLLECTION_NAME } = process.env;
 
 class TradeRecordManager {
-  constructor({ dbName = DB_NAME, collectionName = COLLECTION_NAME } = {}) {
+  constructor({
+    dbName = DB_NAME,
+    collectionName = COLLECTION_NAME,
+    recordCollectionName = RECORD_COLLECTION_NAME,
+  } = {}) {
     this.dbName = dbName;
     this.collectionName = collectionName;
+    this.recordCollectionName = recordCollectionName;
   }
 
   async getDb({ dbName = this.dbName } = {}) {
@@ -29,6 +34,7 @@ class TradeRecordManager {
    * @param {Trader} trader
    */
   process({ ticker, strategy, trader }) {
+    this.record({ ticker, strategy, trader });
     const { exitOrder } = trader;
     if (exitOrder === null) {
       return this.add({ ticker, strategy, trader });
@@ -86,6 +92,12 @@ class TradeRecordManager {
     const collection = await this.getCollection();
     const result = await collection.find(query).toArray();
     return result;
+  }
+
+  async record({ ticker, strategy, trader }) {
+    const { symbol } = ticker;
+    const collection = await this.getCollection({ collectionName: this.recordCollectionName });
+    return collection.insertOne({ symbol, ticker, strategy, trader });
   }
 }
 

@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const BinanceDashboard = require('./binance/dashboard.js');
 const GdaxDashboard = require('./gdax/dashboard.js');
 const CoinigyTickerBook = require('./coinigy/ticker-book.js');
+const TradeRecordManager = require('./modules/trade-record-manager.js');
 const CoinigyAdapter = require('./coinigy/adapter.js');
 const MockTickerBook = require('./mocks/ticker-book.js');
 const commandLineArgs = require('command-line-args');
@@ -19,6 +20,7 @@ const PORT = process.env.PORT || 5000;
 const { ALLOW_ORIGIN } = process.env;
 
 const tickerBook = cmdLineOptions.mock ? new MockTickerBook() : new CoinigyTickerBook();
+const tradeRecordManager = new TradeRecordManager();
 
 const app = express();
 const allowCrossDomain = (req, res, next) => {
@@ -61,6 +63,12 @@ app.post('/notifications', async (req, res) => {
 });
 
 app.get('/tickers', () => tickerBook.serialize());
+
+app.post('/trade-order', async (req, res) => {
+  const { ticker, strategy, trader } = req.body;
+  const result = await tradeRecordManager.add({ ticker, strategy, trader });
+  res.send(result);
+});
 
 tickerBook.poll();
 app.listen(PORT);

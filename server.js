@@ -64,7 +64,7 @@ app.post('/notifications', async (req, res) => {
 
 app.get('/tickers', () => tickerBook.serialize());
 
-app.post('/trade-order', async (req, res) => {
+app.post('/trade-record', async (req, res) => {
   const { ticker, strategy, trader } = req.body;
   const result = await tradeRecordManager.process({ ticker, strategy, trader });
   if (result instanceof Error) {
@@ -73,9 +73,22 @@ app.post('/trade-order', async (req, res) => {
   return res.send(result);
 });
 
+app.put('/trade-record', async (req, res) => {
+  const { ticker, strategy } = req.body;
+  const result = await tradeRecordManager.update({ ticker, strategy });
+  if (result instanceof Error) {
+    return res.status(400).send(result);
+  }
+  return res.send(result);
+});
+
+app.get('/trade-record', async (req, res) => {
+  const result = await tradeRecordManager.find({});
+  return res.send(result);
+});
+
 tickerBook.poll();
-// app.listen(PORT);
-app.listen(3042);
+app.listen(PORT);
 
 // testing
 // const symbol = 'NCASHBTC';

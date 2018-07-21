@@ -17,21 +17,29 @@ const cmdLineOptions = commandLineArgs(cmdDefs);
 
 // const { requestMethods } = Constants;
 const PORT = process.env.PORT || 5000;
-const { ALLOW_ORIGIN } = process.env;
+const { ALLOW_ORIGIN, RECORD_MANAGER_USER, RECORD_MANGER_PWD } = process.env;
 
 const tickerBook = cmdLineOptions.mock ? new MockTickerBook() : new CoinigyTickerBook();
 const tradeRecordManager = new TradeRecordManager();
 
 const app = express();
-const allowCrossDomain = (req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', ALLOW_ORIGIN);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Content-Type', 'application/json');
-  next();
+// const allowCrossDomain = (req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', ALLOW_ORIGIN);
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+//   res.setHeader('Content-Type', 'application/json');
+//   next();
+// };
+// app.use(allowCrossDomain);
+const simpleAuth = (req, res, next) => {
+  const { username, password } = req.body;
+  if (username === RECORD_MANAGER_USER && password === RECORD_MANGER_PWD) {
+    return next();
+  }
+  throw new Error('Record manager authorization failed');
 };
-app.use(allowCrossDomain);
 app.use(bodyParser.json());
+app.use(simpleAuth);
 
 app.get('/dashboards', async (req, res) => {
   const dashboards = [];

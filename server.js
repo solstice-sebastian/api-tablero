@@ -23,16 +23,16 @@ const tickerBook = cmdLineOptions.mock ? new MockTickerBook() : new CoinigyTicke
 const tradeRecordManager = new TradeRecordManager();
 
 const app = express();
-// const allowCrossDomain = (req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', ALLOW_ORIGIN);
-//   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-//   res.setHeader('Content-Type', 'application/json');
-//   next();
-// };
-// app.use(allowCrossDomain);
+const allowCrossDomain = (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', ALLOW_ORIGIN);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Content-Type', 'application/json');
+  next();
+};
+app.use(allowCrossDomain);
 const simpleAuth = (req, res, next) => {
-  const { username, password } = req.body;
+  const { username, password } = JSON.parse(req.headers.authorization);
   if (username === RECORD_MANAGER_USER && password === RECORD_MANGER_PWD) {
     return next();
   }
@@ -95,7 +95,7 @@ app.get('/trade-record', async (req, res) => {
   return res.send(result);
 });
 
-tickerBook.poll();
+// tickerBook.poll();
 app.listen(PORT);
 
 // testing

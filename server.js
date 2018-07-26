@@ -1,8 +1,9 @@
 require('dotenv').config();
-const request = require('request');
+const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
-// const Constants = require('@solstice.sebastian/constants');
+const Constants = require('@solstice.sebastian/constants');
+const https = require('https');
 const BinanceDashboard = require('./binance/dashboard.js');
 const GdaxDashboard = require('./gdax/dashboard.js');
 const CoinigyTickerBook = require('./coinigy/ticker-book.js');
@@ -17,28 +18,40 @@ const cmdLineOptions = commandLineArgs(cmdDefs);
 
 // const { requestMethods } = Constants;
 const PORT = process.env.PORT || 5000;
-const { ALLOW_ORIGIN, RECORD_MANAGER_USER, RECORD_MANGER_PWD } = process.env;
+const { ALLOW_ORIGIN, RECORD_MANAGER_USER, RECORD_MANGER_PWD, ENVIRONMENT } = process.env;
 
 const tickerBook = cmdLineOptions.mock ? new MockTickerBook() : new CoinigyTickerBook();
 const tradeRecordManager = new TradeRecordManager();
 
 const app = express();
+app.use(bodyParser.json());
 const allowCrossDomain = (req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', ALLOW_ORIGIN);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'authorization,content-type,rando');
   res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Accept', 'application/json');
   next();
 };
 app.use(allowCrossDomain);
 const simpleAuth = (req, res, next) => {
-  const { username, password } = JSON.parse(req.headers.authorization);
-  if (username === RECORD_MANAGER_USER && password === RECORD_MANGER_PWD) {
+  if (req.headers.origin !== ALLOW_ORIGIN) {
+    try {
+      const { username, password } = JSON.parse(req.headers.authorization);
+      if (username === RECORD_MANAGER_USER && password === RECORD_MANGER_PWD) {
+        return next();
+      }
+      throw new Error('Record manager authorization failed');
+    } catch (e) {
+      if (req.headers.authorization === undefined) {
+        throw new Error('credentials missing');
+      }
+      throw new Error('Record manager authorization failed');
+    }
+  } else {
     return next();
   }
-  throw new Error('Record manager authorization failed');
 };
-app.use(bodyParser.json());
 app.use(simpleAuth);
 
 app.get('/dashboards', async (req, res) => {
@@ -96,7 +109,17 @@ app.get('/trade-record', async (req, res) => {
 });
 
 // tickerBook.poll();
-app.listen(PORT);
+
+if (ENVIRONMENT !== Constants.environments.PRODUCTION) {
+  const credentials = {
+    key: fs.readFileSync('certs/server.key', 'utf8'),
+    cert: fs.readFileSync('certs/server.crt', 'utf8'),
+  };
+  const server = https.createServer(credentials, app);
+  server.listen(PORT);
+} else {
+  app.listen(PORT);
+}
 
 // testing
 // const symbol = 'NCASHBTC';

@@ -18,7 +18,7 @@ const cmdLineOptions = commandLineArgs(cmdDefs);
 
 // const { requestMethods } = Constants;
 const PORT = process.env.PORT || 5000;
-const { ALLOW_ORIGIN, RECORD_MANAGER_USER, RECORD_MANGER_PWD, ENVIRONMENT } = process.env;
+const { ALLOW_ORIGIN, RECORD_MANAGER_USER, RECORD_MANAGER_PWD, ENVIRONMENT } = process.env;
 
 const tickerBook = cmdLineOptions.mock ? new MockTickerBook() : new CoinigyTickerBook();
 const tradeRecordManager = new TradeRecordManager();
@@ -38,15 +38,15 @@ const simpleAuth = (req, res, next) => {
   if (req.headers.origin !== ALLOW_ORIGIN) {
     try {
       const { username, password } = JSON.parse(req.headers.authorization);
-      if (username === RECORD_MANAGER_USER && password === RECORD_MANGER_PWD) {
+      if (username === RECORD_MANAGER_USER && password === RECORD_MANAGER_PWD) {
         return next();
       }
       throw new Error('Record manager authorization failed');
     } catch (e) {
       if (req.headers.authorization === undefined) {
-        throw new Error('credentials missing');
+        throw new Error('credentials missing', e);
       }
-      throw new Error('Record manager authorization failed');
+      throw new Error('Record manager authorization failed', e);
     }
   } else {
     return next();

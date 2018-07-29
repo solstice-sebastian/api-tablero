@@ -7,7 +7,15 @@ const Constants = require('@solstice.sebastian/constants');
 const { ENTERED } = Constants.botStates;
 
 const collectionName = 'test_manager';
-const manager = new TradeRecordManager({ collectionName });
+const entriesCollectionName = 'test_entries';
+const statsCollectionName = 'test_stats';
+// const dbName = 'test_db';
+const manager = new TradeRecordManager({
+  // dbName,
+  collectionName,
+  entriesCollectionName,
+  statsCollectionName,
+});
 
 const entryTicker = {
   symbol: 'NCASHBTC',
@@ -54,11 +62,24 @@ test('update', async (t) => {
 });
 
 test('remove', async (t) => {
-  t.plan(1);
+  t.plan(2);
+  await manager.clear();
+  const inserted = await manager.add({ ticker: entryTicker, strategy, trader });
+  const removed = await manager.remove({ ticker: entryTicker });
+  t.deepEqual(removed, inserted);
+  t.equal(removed.symbol, entryTicker.symbol);
+  t.end();
+});
+
+test('buildStats', async (t) => {
+  t.plan(3);
   await manager.clear();
   await manager.add({ ticker: entryTicker, strategy, trader });
-  const result = await manager.remove({ ticker: entryTicker });
-  t.deepEqual(result.deletedCount, 1);
+  const exitTicker = Object.assign({}, entryTicker, { price: entryTicker.price * 2 });
+  const statsRecord = await manager.buildStats({ ticker: exitTicker });
+  t.equal(statsRecord.price, exitTicker.price.toFixed(8));
+  t.equal(statsRecord.profitLoss, 1, 'profitLoss');
+  t.equal(statsRecord.humanProfitLoss, '100.0000%');
   t.end();
 });
 

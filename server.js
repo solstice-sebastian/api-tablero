@@ -72,7 +72,8 @@ app.post('/notifications', async (req, res) => {
   const adapter = new CoinigyAdapter();
   try {
     const { symbol, price } = req.body.notification;
-    const ticker = tickerBook.getTicker(symbol);
+    const latest = await tickerBook.fetch();
+    const ticker = latest.getTicker(symbol);
     const coinigySymbol = ticker.mktName;
     const result = await adapter.addAlert({ price, symbol: coinigySymbol });
     console.log(`result:`, result);
@@ -83,7 +84,10 @@ app.post('/notifications', async (req, res) => {
   }
 });
 
-app.get('/tickers', () => tickerBook.serialize());
+app.get('/tickers', async (req, res) => {
+  const latest = await tickerBook.fetch();
+  res.send(latest.serialize());
+});
 
 app.post('/trade-record', async (req, res) => {
   const { ticker, strategy, trader } = req.body;
@@ -107,8 +111,6 @@ app.get('/trade-record', async (req, res) => {
   const result = await tradeRecordManager.find({});
   return res.send(result);
 });
-
-// tickerBook.poll();
 
 if (ENVIRONMENT !== Constants.environments.PRODUCTION) {
   const credentials = {

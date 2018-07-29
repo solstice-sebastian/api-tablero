@@ -41,13 +41,15 @@ class TradeRecordManager {
    * @param {Strategy} strategy
    * @param {Trader} trader
    */
-  process({ ticker, strategy, trader }) {
+  async process({ ticker, strategy, trader }) {
     this.record({ ticker, strategy, trader });
     const { exitOrder } = trader;
     if (exitOrder === null) {
       return this.add({ ticker, strategy, trader });
     }
-    return this.remove({ ticker });
+    const statsRecord = await this.buildStats({ ticker, strategy, trader });
+    await this.remove({ ticker });
+    return statsRecord;
   }
 
   async add({ ticker, strategy, trader }) {
@@ -88,17 +90,42 @@ class TradeRecordManager {
     return updated[0];
   }
 
-  async remove({ ticker, trader, strategy }) {
-    const statsEntry = await this.buildStats({ ticker, trader, strategy });
+  async remove({ ticker }) {
     const { symbol } = ticker;
     const collection = await this.getCollection({ collectionName: this.entriesCollectionName });
-    await collection.deleteOne({ symbol });
-    return statsEntry;
+    const recordToRemove = await collection.find({ symbol }).toArray();
+    const deleteResult = await collection.deleteOne({ symbol });
+    if (deleteResult.deletedCount === 1) {
+      return recordToRemove[0];
+    }
+    throw new Error('TradeRecordManager#remove: error deleting record');
   }
 
   async clear() {
-    const collection = await this.getCollection({ collectionName: this.entriesCollectionName });
-    return collection.drop();
+    const db = await this.getDb();
+    const collections = await db.collections();
+    const collectionNames = collections.map((collection) => collection.collectionName);
+    if (collectionNames.includes(this.entriesCollectionName)) {
+      const entriesCollection = await this.getCollection({
+        collectionName: this.entriesCollectionName,
+      });
+      await entriesCollection.drop();
+    }
+
+    if (collectionNames.includes(this.recordCollectionName)) {
+      const recordCollection = await this.getCollection({
+        collectionName: this.recordCollectionName,
+      });
+      await recordCollection.drop();
+    }
+
+    if (collectionNames.includes(this.statsCollectionName)) {
+      const statsCollection = await this.getCollection({
+        collectionName: this.statsCollectionName,
+      });
+      await statsCollection.drop();
+    }
+    return Promise.resolve(this);
   }
 
   async find(query) {
@@ -123,8 +150,8 @@ class TradeRecordManager {
     const tradeStats = new TradeStats({ entryModel: entryRecords[0], ticker });
     const statsCollection = await this.getCollection({ collectionName: this.statsCollectionName });
     const insertResult = await statsCollection.insertOne(tradeStats.toRecord());
-    const statsEntry = insertResult.ops[0];
-    return statsEntry;
+    const statsRecord = insertResult.ops[0];
+    return statsRecord;
   }
 }
 

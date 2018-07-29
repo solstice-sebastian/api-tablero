@@ -61,9 +61,9 @@ class CoinigyAdapter {
    * };
    */
   async addAlert({ symbol, price }) {
-    let exchangeCode = coinigy.exchangeCodes.BINANCE;
+    let exchangeCode = Constants.binance.EXCHANGE_CODE;
     if (symbol.toLowerCase().includes('usd')) {
-      exchangeCode = coinigy.exchangeCodes.GDAX;
+      exchangeCode = Constants.gdax.EXCHANGE_CODE;
     }
     const note = `## ${symbol} ## has reached a price of '${price}'`;
     const endpoint = coinigy.endpoints.ADD_ALERT;

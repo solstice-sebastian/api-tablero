@@ -112,6 +112,12 @@ app.get('/trade-record', async (req, res) => {
   return res.send(result);
 });
 
+app.delete('/trade-record', async (req, res) => {
+  const { ticker } = req.body;
+  const result = await tradeRecordManager.remove({ ticker });
+  return res.send(result);
+});
+
 if (ENVIRONMENT !== Constants.environments.PRODUCTION) {
   const credentials = {
     key: fs.readFileSync('certs/server.key', 'utf8'),

@@ -69,7 +69,7 @@ class TradeRecordManager {
       dbTimestamp,
       dbDatetime,
     });
-    console.log(`success adding entering with ${symbol}`);
+    console.log(`success entering ${symbol}`);
     return result.ops[0];
   }
 
@@ -86,6 +86,7 @@ class TradeRecordManager {
         }
       );
       const updated = await collection.find({ symbol }).toArray();
+      console.log(`success updating ${symbol}`);
       return updated[0];
     } catch (error) {
       return console.log(`Error updating strategy for ${symbol}`, error);
@@ -98,6 +99,7 @@ class TradeRecordManager {
     try {
       const recordToRemove = await collection.find({ symbol }).toArray();
       await collection.deleteOne({ symbol });
+      console.log(`success removing ${symbol}`);
       return recordToRemove[0];
     } catch (error) {
       return console.log(`TradeRecordManager#remove: error deleting ${symbol}`, error);

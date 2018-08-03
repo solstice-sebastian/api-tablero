@@ -128,19 +128,3 @@ if (ENVIRONMENT !== Constants.environments.PRODUCTION) {
 } else {
   app.listen(PORT);
 }
-
-// testing
-// const symbol = 'NCASHBTC';
-// const price = 0.00000405;
-// const body = { symbol, price };
-// const url = `http://localhost:${PORT}/notifications`;
-// const options = {
-//   method: 'POST',
-//   url,
-//   json: true,
-//   body,
-// };
-// request.post(options);
-
-// force dashboard
-// request.get({ url: `http://localhost:${PORT}/dashboards` });

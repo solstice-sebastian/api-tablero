@@ -32,7 +32,7 @@
   "dependencies": {
     "@solstice.sebastian/constants": "^1.1.1",
     "@solstice.sebastian/db-client": "^1.0.4",
-    "@solstice.sebastian/helpers": "^1.1.0",
+    "@solstice.sebastian/helpers": "^1.1.1",
     "@solstice.sebastian/trade-stats": "^1.1.1",
     "body-parser": "^1.18.3",
     "change-case": "^3.0.2",

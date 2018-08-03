@@ -69,36 +69,39 @@ class TradeRecordManager {
       dbTimestamp,
       dbDatetime,
     });
+    console.log(`success adding entering with ${symbol}`);
     return result.ops[0];
   }
 
   async update({ ticker, strategy }) {
     const { symbol } = ticker;
     const collection = await this.getCollection({ collectionName: this.entriesCollectionName });
-    const result = await collection.updateOne(
-      { symbol },
-      {
-        $set: {
-          strategy,
-        },
-      }
-    );
-    if (!result.modifiedCount || result.modifiedCount !== 1) {
-      throw new Error('Error updating strategy', result);
+    try {
+      await collection.updateOne(
+        { symbol },
+        {
+          $set: {
+            strategy,
+          },
+        }
+      );
+      const updated = await collection.find({ symbol }).toArray();
+      return updated[0];
+    } catch (error) {
+      return console.log(`Error updating strategy for ${symbol}`, error);
     }
-    const updated = await collection.find({ symbol }).toArray();
-    return updated[0];
   }
 
   async remove({ ticker }) {
     const { symbol } = ticker;
     const collection = await this.getCollection({ collectionName: this.entriesCollectionName });
-    const recordToRemove = await collection.find({ symbol }).toArray();
-    const deleteResult = await collection.deleteOne({ symbol });
-    if (deleteResult.deletedCount === 1) {
+    try {
+      const recordToRemove = await collection.find({ symbol }).toArray();
+      await collection.deleteOne({ symbol });
       return recordToRemove[0];
+    } catch (error) {
+      return console.log(`TradeRecordManager#remove: error deleting ${symbol}`, error);
     }
-    throw new Error('TradeRecordManager#remove: error deleting record');
   }
 
   async clear() {

@@ -128,3 +128,8 @@ if (ENVIRONMENT !== Constants.environments.PRODUCTION) {
 } else {
   app.listen(PORT);
 }
+
+// const request = require('request');
+
+// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+// request.get(`https://localhost:${PORT}/dashboards`);

@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax, no-await-in-loop */
+/* eslint-disable no-restricted-syntax, no-await-in-loop, no-param-reassign */
 const { mean } = require('lodash');
 const BinanceAccountInfo = require('./account-info.js');
 const BinanceTickerBook = require('./ticker-book.js');
@@ -34,6 +34,7 @@ class BinanceDashboard {
     this.dashboardAssets = await this.resolveMarketBuyIns({
       dashboardAssets: this.build({ orderHistory, balanceBook, tickerBook }),
     });
+    this.totalValue = this.calcTotalValue(this.dashboardAssets, balanceBook, tickerBook);
     return Promise.resolve(this);
   }
 
@@ -74,7 +75,9 @@ class BinanceDashboard {
    * get a ticker price
    */
   async getTickerBook() {
-    this.tickerBook = await new BinanceTickerBook().load(this.adapter);
+    if (this.tickerBook === undefined) {
+      this.tickerBook = await new BinanceTickerBook().load(this.adapter);
+    }
     return this.tickerBook;
   }
 
@@ -150,14 +153,26 @@ class BinanceDashboard {
     return trades.filter((trade) => trade.orderId === order.orderId);
   }
 
+  calcTotalValue(assets, balanceBook, tickerBook) {
+    const totalValue = assets.reduce((acc, curr) => {
+      const assetQty = balanceBook.getQty(curr.asset);
+      const assetValue = assetQty * tickerBook.getBtcPriceForAsset(curr.asset);
+      acc += assetValue;
+      return acc;
+    }, 0);
+    const baseValue = +balanceBook.getQty(this.base);
+    return totalValue + baseValue;
+  }
+
   /**
    * @param {Array<BinanceDashboardAsset>} assets
    */
-  serialize(assets = this.dashboardAssets) {
+  serialize(assets = this.dashboardAssets, totalValue = this.totalValue) {
     const payload = {
       dashboard: {
         id: 1,
         'dashboard-assets': assets,
+        'total-value': totalValue,
       },
     };
     return JSON.stringify(payload);

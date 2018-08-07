@@ -7,6 +7,7 @@ const {
   ENTRIES_COLLECTION_NAME,
   RECORD_COLLECTION_NAME,
   STATS_COLLECTION_NAME,
+  ERRORS_COLLECTION_NAME,
 } = process.env;
 
 class TradeRecordManager {
@@ -15,11 +16,13 @@ class TradeRecordManager {
     entriesCollectionName = ENTRIES_COLLECTION_NAME,
     recordCollectionName = RECORD_COLLECTION_NAME,
     statsCollectionName = STATS_COLLECTION_NAME,
+    errorsCollectionName = ERRORS_COLLECTION_NAME,
   } = {}) {
     this.dbName = dbName;
     this.entriesCollectionName = entriesCollectionName;
     this.recordCollectionName = recordCollectionName;
     this.statsCollectionName = statsCollectionName;
+    this.errorsCollectionName = errorsCollectionName;
   }
 
   async getDb({ dbName = this.dbName } = {}) {
@@ -41,14 +44,14 @@ class TradeRecordManager {
    * @param {Strategy} strategy
    * @param {Trader} trader
    */
-  async process({ ticker, strategy, trader }) {
-    this.record({ ticker, strategy, trader });
+  async process({ ticker, strategy, trader, error }) {
+    this.record({ ticker, strategy, trader, error });
     const { exitOrder } = trader;
     if (exitOrder === null) {
       return this.add({ ticker, strategy, trader });
     }
     const statsRecord = await this.buildStats({ ticker, strategy, trader });
-    await this.remove({ ticker });
+    await this.remove({ ticker, error });
     return statsRecord;
   }
 
@@ -93,16 +96,25 @@ class TradeRecordManager {
     }
   }
 
-  async remove({ ticker }) {
+  async remove({ ticker, error }) {
     const { symbol } = ticker;
     const collection = await this.getCollection({ collectionName: this.entriesCollectionName });
     try {
       const recordToRemove = await collection.find({ symbol }).toArray();
+
+      // if error, add to unresolved_errors for further investigation
+      if (error !== undefined) {
+        const errorsCollection = await this.getCollection({
+          collectionName: this.errorsCollectionName,
+        });
+        const { strategy, trader } = recordToRemove[0];
+        errorsCollection.insertOne({ symbol, ticker, strategy, trader, error });
+      }
       await collection.deleteOne({ symbol });
       console.log(`success removing ${symbol}`);
       return recordToRemove[0];
-    } catch (error) {
-      return console.log(`TradeRecordManager#remove: error deleting ${symbol}`, error);
+    } catch (err) {
+      return console.log(`TradeRecordManager#remove: error deleting ${symbol}`, err);
     }
   }
 

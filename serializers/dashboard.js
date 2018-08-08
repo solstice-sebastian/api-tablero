@@ -6,7 +6,8 @@ const serializeDashboards = (dashboards) => {
     const serialized = {
       id: i,
       'dashboard-assets': curr.dashboardAssets,
-      'total-value': Number.isNumber(curr.totalValue) ? curr.totalValue.toFixed(8) : 0,
+      'total-value':
+        Number.isNaN(parseFloat(curr.totalValue)) === false ? curr.totalValue.toFixed(8) : 0,
     };
     acc.dashboards.push(serialized);
     return acc;

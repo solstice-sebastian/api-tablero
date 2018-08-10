@@ -52,7 +52,7 @@ const simpleAuth = (req, res, next) => {
     return next();
   }
 };
-app.use(simpleAuth);
+// app.use(simpleAuth);
 
 app.get('/dashboards', async (req, res) => {
   const dashboards = [];
@@ -129,7 +129,7 @@ if (ENVIRONMENT !== Constants.environments.PRODUCTION) {
   app.listen(PORT);
 }
 
-// const request = require('request');
+const request = require('request');
 
-// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
-// request.get(`https://localhost:${PORT}/dashboards`);
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+request.get(`https://localhost:${PORT}/dashboards`);

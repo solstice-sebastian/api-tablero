@@ -65,7 +65,7 @@ class CoinigyAdapter {
     if (symbol.toLowerCase().includes('usd')) {
       exchangeCode = Constants.gdax.EXCHANGE_CODE;
     }
-    const note = `## ${symbol} ## has reached a price of '${price}'`;
+    const note = `Symbol: '${symbol}' has reached price of '${price}'`;
     const endpoint = coinigy.endpoints.ADD_ALERT;
     const params = {
       exch_code: exchangeCode,

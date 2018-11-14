@@ -29,7 +29,7 @@ class BinanceAccountInfo {
     const endpoint = endpoints.GET_ACCOUNT_INFO;
     return new Promise((res, rej) => {
       this.adapter
-        .get(endpoint, { timestamp })
+        .get(endpoint, { timestamp, recvWindow: 1000 * 60 })
         .then((accountInfo) => {
           res(this.init(accountInfo));
         })

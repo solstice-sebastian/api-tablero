@@ -3,6 +3,7 @@ const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
 const Constants = require('@solstice.sebastian/constants');
+const { getNotes } = require('@solstice.sebastian/alert-factory');
 const https = require('https');
 const BinanceDashboard = require('./binance/dashboard.js');
 const GdaxDashboard = require('./gdax/dashboard.js');
@@ -53,10 +54,11 @@ app.post('/notifications', async (req, res) => {
     const latest = await tickerBook.fetch();
     const ticker = latest.getTicker(symbol);
     const coinigySymbol = ticker.mktName;
-    const result = await adapter.addAlert({ price, symbol: coinigySymbol });
+    const note = getNotes([price], ticker.price);
+    const result = await adapter.addAlert({ price, symbol: coinigySymbol, note });
     console.log(`result:`, result);
     // fake return of data
-    res.send({ notifications: { id: Math.floor(Math.random() * 100000) } });
+    res.send({ notifications: { id: result.notifications.id } });
   } catch (err) {
     res.send(err.message);
   }
@@ -80,5 +82,5 @@ if (ENVIRONMENT !== Constants.environments.PRODUCTION) {
 
 // const request = require('request');
 
-// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 // request.get(`https://localhost:${PORT}/dashboards`);

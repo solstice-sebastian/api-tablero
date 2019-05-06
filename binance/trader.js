@@ -1,5 +1,5 @@
 const Constants = require('@solstice.sebastian/constants');
-const { modByPercent } = require('@solstice.sebastian/helpers')();
+const { modByPercent } = require('@solstice.sebastian/helpers');
 const { getDefaults } = require('./helpers.js')();
 
 const { orderTypes, orderSides, endpoints } = Constants.binance;

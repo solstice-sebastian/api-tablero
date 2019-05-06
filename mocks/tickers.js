@@ -1,5 +1,5 @@
 const Ticker = require('../models/ticker.js');
-const { modByPercent } = require('@solstice.sebastian/helpers')();
+const { modByPercent } = require('@solstice.sebastian/helpers');
 
 let tickers = [
   new Ticker({ symbol: 'NCASHBTC', price: 0.0031 }),
